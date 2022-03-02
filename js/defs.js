@@ -50,7 +50,7 @@ const CASTLEBIT = {
   wKingSideCastle: 1,
   wQueenSideCastle: 2,
   bKingSideCastle: 4,
-  wQueenSideCastle: 8,
+  bQueenSideCastle: 8,
 };
 
 const SQUARES = {
@@ -146,19 +146,19 @@ const PieceVal = [
 ];
 
 const PieceCol = [
-  COLOURS.BOTH,
-  COLOURS.WHITE,
-  COLOURS.WHITE,
-  COLOURS.WHITE,
-  COLOURS.WHITE,
-  COLOURS.WHITE,
-  COLOURS.WHITE,
-  COLOURS.BLACK,
-  COLOURS.BLACK,
-  COLOURS.BLACK,
-  COLOURS.BLACK,
-  COLOURS.BLACK,
-  COLOURS.BLACK,
+  COLORS.BOTH,
+  COLORS.WHITE,
+  COLORS.WHITE,
+  COLORS.WHITE,
+  COLORS.WHITE,
+  COLORS.WHITE,
+  COLORS.WHITE,
+  COLORS.BLACK,
+  COLORS.BLACK,
+  COLORS.BLACK,
+  COLORS.BLACK,
+  COLORS.BLACK,
+  COLORS.BLACK,
 ];
 
 const PiecePawn = [
@@ -257,24 +257,26 @@ const PieceSlides = [
   BOOL.FALSE,
 ];
 
-const PieceKeys = new Array(14*120)
-const SideKey;
+const PieceKeys = new Array(14 * 120);
+let SideKey;
 const CastleKeys = new Array(26);
 
 const Sq120toSq64 = new Array(BRD_SQ_NUM);
 const Sq64toSq120 = new Array(64);
 
-function RAND_32(){
-    return (Math.floor((Math.random() * 255) + 1) << 23) | 
-    (Math.floor((Math.random()*255) + 1) << 16) | 
-    (Math.floor((Math.random()*255) + 1) << 8) | 
-    (Math.floor((Math.random()*255) + 1));
+function RAND_32() {
+  return (
+    (Math.floor(Math.random() * 255 + 1) << 23) |
+    (Math.floor(Math.random() * 255 + 1) << 16) |
+    (Math.floor(Math.random() * 255 + 1) << 8) |
+    Math.floor(Math.random() * 255 + 1)
+  );
 }
 
-function SQ64(sq120){
+function SQ64(sq120) {
   return Sq120toSq64[sq120];
 }
 
-function SQ120(sq64){
+function SQ120(sq64) {
   return Sq64toSq120[sq64];
 }

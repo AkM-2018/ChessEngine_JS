@@ -79,4 +79,124 @@ function ResetBoard() {
 
 function ParseFen(fen) {
   ResetBoard();
+
+  let rank = RANKS.RANK_8;
+  let file = FILES.FILE_A;
+  let piece = 0;
+  let count = 0;
+  let i = 0;
+  let sq120 = 0;
+  let fenCnt = 0;
+
+  while (rank >= RANKS.RANK_1 && fenCnt < fen.length()) {
+    count = 1;
+
+    switch (fen[fenCnt]) {
+      case "p":
+        piece = PIECES.bPawn;
+        break;
+      case "r":
+        piece = PIECES.bRook;
+        break;
+      case "n":
+        piece = PIECES.bKnight;
+        break;
+      case "b":
+        piece = PIECES.bBishop;
+        break;
+      case "k":
+        piece = PIECES.bKing;
+        break;
+      case "q":
+        piece = PIECES.bQueen;
+        break;
+      case "P":
+        piece = PIECES.wPawn;
+        break;
+      case "R":
+        piece = PIECES.wRook;
+        break;
+      case "N":
+        piece = PIECES.wKnight;
+        break;
+      case "B":
+        piece = PIECES.wBishop;
+        break;
+      case "K":
+        piece = PIECES.wKing;
+        break;
+      case "Q":
+        piece = PIECES.wQueen;
+        break;
+
+      case "1":
+      case "2":
+      case "3":
+      case "4":
+      case "5":
+      case "6":
+      case "7":
+      case "8":
+        piece = PIECES.EMPTY;
+        count = fen[fenCnt].charCodeAt() - "0".charCodeAt();
+        break;
+
+      case "/":
+      case " ":
+        rank--;
+        file = FILES.FILE_A;
+        fenCnt++;
+        continue;
+
+      default:
+        console.log("FEN Error");
+        return;
+    }
+
+    for (i = 0; i < count; i++) {
+      sq120 = FileRank2Sq(file, rank);
+      GameBoard.pieces[sq120] = piece;
+      file++;
+    }
+
+    fenCnt++;
+  }
+
+  GameBoard.side = fen[fenCnt] == "w" ? COLORS.WHITE : COLORS.BLACK;
+  fenCnt += 2;
+
+  for (i = 0; i < 4; i++) {
+    if (fen[fenCnt] == " ") break;
+
+    switch (fen[fenCnt]) {
+      case "K":
+        GameBoard.castlePermission |= CASTLEBIT.wKingSideCastle;
+        break;
+      case "k":
+        GameBoard.castlePermission |= CASTLEBIT.bKingSideCastle;
+        break;
+      case "Q":
+        GameBoard.castlePermission |= CASTLEBIT.wQueenSideCastle;
+        break;
+      case "q":
+        GameBoard.castlePermission |= CASTLEBIT.bQueenSideCastle;
+        break;
+      default:
+        break;
+    }
+
+    fenCnt++;
+  }
+  fenCnt++;
+
+  if (fen[fenCnt] != "-") {
+    file = fen[fenCnt].charCodeAt() - "a".charCodeAt();
+    rank = fen[fenCnt + 1].charCodeAt() - "1".charCodeAt();
+    console.log(
+      "fen[fenCnt]: " + fen[fenCnt] + " File: " + file + " Rank: " + rank
+    );
+    GameBoard.enPassant = FileRank2Sq(file, rank);
+  }
+
+  GameBoard.posKey = GeneratePosKey();
 }
