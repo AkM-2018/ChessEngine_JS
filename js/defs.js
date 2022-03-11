@@ -294,8 +294,19 @@ const LoopNonSlidePiece = [
   PIECES.bKing,
   0,
 ];
-
 const LoopNonSlideIndex = [0, 3];
+
+const LoopSlidePiece = [
+  PIECES.wBishop,
+  PIECES.wRook,
+  PIECES.wQueen,
+  0,
+  PIECES.bBishop,
+  PIECES.bRook,
+  PIECES.bQueen,
+  0,
+];
+const LoopSlideIndex = [0, 4];
 
 const PieceKeys = new Array(14 * 120);
 let SideKey;
