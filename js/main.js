@@ -1,6 +1,9 @@
 $(function () {
   init();
   console.log("Main init called");
+  ParseFen(START_FEN);
+  PrintBoard();
+  GenerateMoves();
 });
 
 function InitFilesRanksBrd() {

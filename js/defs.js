@@ -86,6 +86,12 @@ const MAX_DEPTH = 64;
 const FilesBrd = new Array(BRD_SQ_NUM);
 const RanksBrd = new Array(BRD_SQ_NUM);
 
+const START_FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+const PieceChar = ".PNBRQKpnbrqk";
+const SideChar = "wb-";
+const RankChar = "12345678";
+const FileChar = "abcdefgh";
+
 function FileRank2Sq(file, rank) {
   return 21 + file + rank * 10;
 }
@@ -257,6 +263,40 @@ const PieceSlides = [
   BOOL.FALSE,
 ];
 
+const KnightDir = [-8, -19, -21, -12, 8, 9, 21, 12];
+const RookDir = [-1, -10, 1, 10];
+const BishopDir = [-9, -11, 9, 11];
+const KingDir = [-1, -10, 1, 10, -9, -11, 11, 9];
+
+const DirNum = [0, 0, 8, 4, 4, 8, 8, 0, 8, 4, 4, 8, 8];
+
+const PieceDir = [
+  0,
+  0,
+  KnightDir,
+  BishopDir,
+  RookDir,
+  KingDir,
+  KingDir,
+  0,
+  KnightDir,
+  BishopDir,
+  RookDir,
+  KingDir,
+  KingDir,
+];
+
+const LoopNonSlidePiece = [
+  PIECES.wKnight,
+  PIECES.wKing,
+  0,
+  PIECES.bKnight,
+  PIECES.bKing,
+  0,
+];
+
+const LoopNonSlideIndex = [0, 3];
+
 const PieceKeys = new Array(14 * 120);
 let SideKey;
 const CastleKeys = new Array(26);
@@ -279,4 +319,40 @@ function SQ64(sq120) {
 
 function SQ120(sq64) {
   return Sq64toSq120[sq64];
+}
+
+function PIECE_INDEX(pce, pceNum) {
+  return pce * 10 + pceNum;
+}
+
+function FROM_SQ(m) {
+  return m & 0x7f;
+}
+
+function TO_SQ(m) {
+  return (m >> 7) & 0x7f;
+}
+
+function CAPTURED(m) {
+  return (m >> 14) & 0xf;
+}
+
+function PROMOTED(m) {
+  return (m >> 20) & 0xf;
+}
+
+const MOVE_FLAG_EN_PASSANT = 0x40000;
+const MOVE_FLAG_PAWN_START = 0x80000;
+const MOVE_FLAG_CASTLING = 0x100000;
+
+const MOVE_FLAG_CAPTURED = 0x7c000;
+const MOVE_FLAG_PROMOTED = 0xf00000;
+
+const NO_MOVE = 0;
+
+function SQ_OFF_BOARD(sq) {
+  if (FilesBrd[sq] == SQUARES.OFF_BOARD) {
+    return BOOL.TRUE;
+  }
+  return BOOL.FALSE;
 }
