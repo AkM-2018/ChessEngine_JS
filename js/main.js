@@ -5,6 +5,7 @@ $(function () {
   PrintBoard();
   GenerateMoves();
   PrintMoveList();
+  CheckBoard();
 });
 
 function InitFilesRanksBrd() {

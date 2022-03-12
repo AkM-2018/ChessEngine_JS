@@ -247,9 +247,6 @@ function GenerateMoves() {
     }
   }
 
-  console.log(GameBoard.moveList);
-  console.log(GameBoard.moveListStart);
-
   pceIndex = LoopNonSlideIndex[GameBoard.side];
   pce = LoopNonSlidePiece[pceIndex++];
 

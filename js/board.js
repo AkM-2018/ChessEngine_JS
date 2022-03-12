@@ -15,9 +15,55 @@ GameBoard.moveList = new Array(MAX_DEPTH * MAX_POSITION_MOVES);
 GameBoard.moveScores = new Array(MAX_DEPTH * MAX_POSITION_MOVES);
 GameBoard.moveListStart = new Array(MAX_DEPTH);
 
-console.log(GameBoard.moveList);
-console.log(GameBoard.moveListStart);
-console.log("Even before");
+function CheckBoard() {
+  let t_pieceNum = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+  let t_material = [0, 0];
+  let sq64, t_piece, t_pce_num, sq120, color, pcount;
+
+  for (t_piece = PIECES.wPawn; t_piece <= PIECES.bKing; t_piece++) {
+    for (t_pce_num = 0; t_pce_num < GameBoard.pieceNum[t_piece]; t_pce_num++) {
+      sq120 = GameBoard.pieceList[PIECE_INDEX(t_piece, t_pce_num)];
+      if (GameBoard.pieces[sq120] != t_piece) {
+        console.log("Error Piece Lists!");
+        return BOOL.FALSE;
+      }
+    }
+  }
+
+  for (sq64 = 0; sq64 < 64; sq64++) {
+    sq120 = SQ120(sq64);
+    t_piece = GameBoard.pieces[sq120];
+    t_pieceNum[t_piece]++;
+    t_material[PieceCol[t_piece]] += PieceVal[t_piece];
+  }
+
+  for (t_piece = PIECES.wPawn; t_piece <= PIECES.bKing; t_piece++) {
+    if (t_pieceNum[t_piece] != GameBoard.pieceNum[t_piece]) {
+      console.log("Error t_pieceNum!");
+      return BOOL.FALSE;
+    }
+  }
+
+  if (
+    t_material[COLORS.WHITE] != GameBoard.material[COLORS.WHITE] ||
+    t_material[COLORS.BLACK] != GameBoard.material[COLORS.BLACK]
+  ) {
+    console.log("Error t_material!");
+    return BOOL.FALSE;
+  }
+
+  if (GameBoard.side != COLORS.WHITE && GameBoard.side != COLORS.BLACK) {
+    console.log("Error Gameboard.side");
+    return BOOL.FALSE;
+  }
+
+  if (GeneratePosKey() != GameBoard.posKey) {
+    console.log("Error Gameboard.poskey");
+    return BOOL.FALSE;
+  }
+
+  return BOOL.TRUE;
+}
 
 function PrintBoard() {
   let sq, file, rank, piece;
@@ -363,7 +409,3 @@ function SqAttacked(sq, side) {
 
   return BOOL.FALSE;
 }
-
-console.log(GameBoard.moveList);
-console.log(GameBoard.moveListStart);
-console.log("Even before");
