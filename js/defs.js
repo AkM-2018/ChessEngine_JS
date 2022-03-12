@@ -1,6 +1,6 @@
-const BRD_SQ_NUM = 120;
+export const BRD_SQ_NUM = 120;
 
-const PIECES = {
+export const PIECES = {
   EMPTY: 0,
   wPawn: 1,
   wKnight: 2,
@@ -16,7 +16,7 @@ const PIECES = {
   bKing: 12,
 };
 
-const FILES = {
+export const FILES = {
   FILE_A: 0,
   FILE_B: 1,
   FILE_C: 2,
@@ -28,7 +28,7 @@ const FILES = {
   FILE_NONE: 8,
 };
 
-const RANKS = {
+export const RANKS = {
   RANK_1: 0,
   RANK_2: 1,
   RANK_3: 2,
@@ -40,20 +40,20 @@ const RANKS = {
   RANK_NONE: 8,
 };
 
-const COLORS = {
+export const COLORS = {
   WHITE: 0,
   BLACK: 1,
   BOTH: 2,
 };
 
-const CASTLEBIT = {
+export const CASTLEBIT = {
   wKingSideCastle: 1,
   wQueenSideCastle: 2,
   bKingSideCastle: 4,
   bQueenSideCastle: 8,
 };
 
-const SQUARES = {
+export const SQUARES = {
   A1: 21,
   B1: 22,
   C1: 23,
@@ -74,25 +74,27 @@ const SQUARES = {
   OFF_BOARD: 100,
 };
 
-const BOOL = {
+export const BOOL = {
   FALSE: 0,
   TRUE: 1,
 };
 
-const MAX_GAME_MOVES = 2048;
-const MAX_POSITION_MOVES = 256;
-const MAX_DEPTH = 64;
+export const MAX_GAME_MOVES = 2048;
+export const MAX_POSITION_MOVES = 256;
+export const MAX_DEPTH = 64;
 
-const FilesBrd = new Array(BRD_SQ_NUM);
-const RanksBrd = new Array(BRD_SQ_NUM);
+export const FilesBrd = new Array(BRD_SQ_NUM);
+export const RanksBrd = new Array(BRD_SQ_NUM);
 
-const START_FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
-const PieceChar = ".PNBRQKpnbrqk";
-const SideChar = "wb-";
-const RankChar = "12345678";
-const FileChar = "abcdefgh";
+export const START_FEN =
+  "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
-function FileRank2Sq(file, rank) {
+export const PieceChar = ".PNBRQKpnbrqk";
+export const SideChar = "wb-";
+export const RankChar = "12345678";
+export const FileChar = "abcdefgh";
+
+export function FileRank2Sq(file, rank) {
   return 21 + file + rank * 10;
 }
 
@@ -352,16 +354,16 @@ function PROMOTED(m) {
   return (m >> 20) & 0xf;
 }
 
-const MOVE_FLAG_EN_PASSANT = 0x40000;
-const MOVE_FLAG_PAWN_START = 0x80000;
-const MOVE_FLAG_CASTLING = 0x100000;
+export const MOVE_FLAG_EN_PASSANT = 0x40000;
+export const MOVE_FLAG_PAWN_START = 0x80000;
+export const MOVE_FLAG_CASTLING = 0x1000000;
 
-const MOVE_FLAG_CAPTURED = 0x7c000;
-const MOVE_FLAG_PROMOTED = 0xf00000;
+export const MOVE_FLAG_CAPTURED = 0x7c000;
+export const MOVE_FLAG_PROMOTED = 0xf00000;
 
-const NO_MOVE = 0;
+export const NO_MOVE = 0;
 
-function SQ_OFF_BOARD(sq) {
+export function SQ_OFF_BOARD(sq) {
   if (FilesBrd[sq] == SQUARES.OFF_BOARD) {
     return BOOL.TRUE;
   }

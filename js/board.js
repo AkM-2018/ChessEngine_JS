@@ -15,6 +15,10 @@ GameBoard.moveList = new Array(MAX_DEPTH * MAX_POSITION_MOVES);
 GameBoard.moveScores = new Array(MAX_DEPTH * MAX_POSITION_MOVES);
 GameBoard.moveListStart = new Array(MAX_DEPTH);
 
+console.log(GameBoard.moveList);
+console.log(GameBoard.moveListStart);
+console.log("Even before");
+
 function PrintBoard() {
   let sq, file, rank, piece;
 
@@ -359,3 +363,7 @@ function SqAttacked(sq, side) {
 
   return BOOL.FALSE;
 }
+
+console.log(GameBoard.moveList);
+console.log(GameBoard.moveListStart);
+console.log("Even before");
