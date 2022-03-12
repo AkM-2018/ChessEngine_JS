@@ -84,9 +84,6 @@ function GenerateMoves() {
         }
       }
 
-      console.log(GameBoard.moveList);
-      console.log(GameBoard.moveListStart);
-
       if (
         SQ_OFF_BOARD(sq + 9) == BOOL.FALSE &&
         PieceCol[GameBoard.pieces[sq + 9]] == COLORS.BLACK
@@ -101,9 +98,6 @@ function GenerateMoves() {
         AddWhitePawnCaptureMove(sq, sq + 11, GameBoard.pieces[sq + 11]);
       }
 
-      console.log(GameBoard.moveList);
-      console.log(GameBoard.moveListStart);
-
       if (GameBoard.enPassant != SQUARES.NO_SQ) {
         if (sq + 9 == GameBoard.enPassant) {
           AddEnPassantMove(
@@ -116,9 +110,6 @@ function GenerateMoves() {
           );
         }
       }
-
-      console.log(GameBoard.moveList);
-      console.log(GameBoard.moveListStart);
     }
 
     if (GameBoard.castlePermission & CASTLEBIT.wKingSideCastle) {

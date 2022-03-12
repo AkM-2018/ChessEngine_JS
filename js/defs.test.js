@@ -139,6 +139,13 @@ test("FLAGS are correctly initialized", () => {
   expect(defs.NO_MOVE).toBe(0);
 });
 
+test("DIRECTIONS for pieces are corretly initialized", () => {
+  expect(defs.KingDir).toEqual([-1, -10, 1, 10, -9, -11, 11, 9]);
+  expect(defs.BishopDir).toEqual([-9, -11, 9, 11]);
+  expect(defs.RookDir).toEqual([-1, -10, 1, 10]);
+  expect(defs.KnightDir).toEqual([-8, -19, -21, -12, 8, 19, 21, 12]);
+});
+
 /** Not sure how to implement.
  *  Should be called after FilesBrd is initialized
 

@@ -1,7 +1,4 @@
 $(function () {
-  console.log(GameBoard.moveList);
-  console.log(GameBoard.moveListStart);
-  console.log("Even before");
   init();
   console.log("Main init called");
   ParseFen(START_FEN);

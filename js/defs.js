@@ -1,6 +1,6 @@
-export const BRD_SQ_NUM = 120;
+const BRD_SQ_NUM = 120;
 
-export const PIECES = {
+const PIECES = {
   EMPTY: 0,
   wPawn: 1,
   wKnight: 2,
@@ -16,7 +16,7 @@ export const PIECES = {
   bKing: 12,
 };
 
-export const FILES = {
+const FILES = {
   FILE_A: 0,
   FILE_B: 1,
   FILE_C: 2,
@@ -28,7 +28,7 @@ export const FILES = {
   FILE_NONE: 8,
 };
 
-export const RANKS = {
+const RANKS = {
   RANK_1: 0,
   RANK_2: 1,
   RANK_3: 2,
@@ -40,20 +40,20 @@ export const RANKS = {
   RANK_NONE: 8,
 };
 
-export const COLORS = {
+const COLORS = {
   WHITE: 0,
   BLACK: 1,
   BOTH: 2,
 };
 
-export const CASTLEBIT = {
+const CASTLEBIT = {
   wKingSideCastle: 1,
   wQueenSideCastle: 2,
   bKingSideCastle: 4,
   bQueenSideCastle: 8,
 };
 
-export const SQUARES = {
+const SQUARES = {
   A1: 21,
   B1: 22,
   C1: 23,
@@ -74,32 +74,31 @@ export const SQUARES = {
   OFF_BOARD: 100,
 };
 
-export const BOOL = {
+const BOOL = {
   FALSE: 0,
   TRUE: 1,
 };
 
-export const MAX_GAME_MOVES = 2048;
-export const MAX_POSITION_MOVES = 256;
-export const MAX_DEPTH = 64;
+const MAX_GAME_MOVES = 2048;
+const MAX_POSITION_MOVES = 256;
+const MAX_DEPTH = 64;
 
-export const FilesBrd = new Array(BRD_SQ_NUM);
-export const RanksBrd = new Array(BRD_SQ_NUM);
+const FilesBrd = new Array(BRD_SQ_NUM);
+const RanksBrd = new Array(BRD_SQ_NUM);
 
-export const START_FEN =
-  "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+const START_FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR b KQkq - 0 1";
 
-export const PieceChar = ".PNBRQKpnbrqk";
-export const SideChar = "wb-";
-export const RankChar = "12345678";
-export const FileChar = "abcdefgh";
+const PieceChar = ".PNBRQKpnbrqk";
+const SideChar = "wb-";
+const RankChar = "12345678";
+const FileChar = "abcdefgh";
 
-export function FileRank2Sq(file, rank) {
+function FileRank2Sq(file, rank) {
   return 21 + file + rank * 10;
 }
 
 // Pawn
-var PieceBig = [
+const PieceBig = [
   BOOL.FALSE,
   BOOL.FALSE,
   BOOL.TRUE,
@@ -265,7 +264,7 @@ const PieceSlides = [
   BOOL.FALSE,
 ];
 
-const KnightDir = [-8, -19, -21, -12, 8, 9, 21, 12];
+const KnightDir = [-8, -19, -21, -12, 8, 19, 21, 12];
 const RookDir = [-1, -10, 1, 10];
 const BishopDir = [-9, -11, 9, 11];
 const KingDir = [-1, -10, 1, 10, -9, -11, 11, 9];
@@ -354,18 +353,34 @@ function PROMOTED(m) {
   return (m >> 20) & 0xf;
 }
 
-export const MOVE_FLAG_EN_PASSANT = 0x40000;
-export const MOVE_FLAG_PAWN_START = 0x80000;
-export const MOVE_FLAG_CASTLING = 0x1000000;
+const MOVE_FLAG_EN_PASSANT = 0x40000;
+const MOVE_FLAG_PAWN_START = 0x80000;
+const MOVE_FLAG_CASTLING = 0x1000000;
 
-export const MOVE_FLAG_CAPTURED = 0x7c000;
-export const MOVE_FLAG_PROMOTED = 0xf00000;
+const MOVE_FLAG_CAPTURED = 0x7c000;
+const MOVE_FLAG_PROMOTED = 0xf00000;
 
-export const NO_MOVE = 0;
+const NO_MOVE = 0;
 
-export function SQ_OFF_BOARD(sq) {
+function SQ_OFF_BOARD(sq) {
   if (FilesBrd[sq] == SQUARES.OFF_BOARD) {
     return BOOL.TRUE;
   }
   return BOOL.FALSE;
+}
+
+function HASH_PIECE(pce, sq) {
+  GameBoard.posKey ^= PieceKeys[pce * 120 + sq];
+}
+
+function HASH_CASTLING() {
+  GameBoard.posKey ^= CastleKeys[GameBoard.castlePermission];
+}
+
+function HASH_SIDE() {
+  GameBoard.posKey ^= SideKey;
+}
+
+function HASH_ENPASSANT() {
+  GameBoard.posKey ^= PieceKeys[GameBoard.enPassant];
 }
