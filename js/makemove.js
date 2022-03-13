@@ -58,7 +58,7 @@ function MakeMove(move) {
   GameBoard.history[GameBoard.historyPly].posKey = GameBoard.posKey;
 
   if ((move & MOVE_FLAG_EN_PASSANT) != 0) {
-    if (side == COLOURS.WHITE) {
+    if (side == COLORS.WHITE) {
       ClearPiece(to - 10);
     } else {
       ClearPiece(to + 10);
@@ -111,7 +111,7 @@ function MakeMove(move) {
   if (PiecePawn[GameBoard.pieces[from]] == BOOL.TRUE) {
     GameBoard.fiftyMove = 0;
     if ((move & MOVE_FLAG_PAWN_START) != 0) {
-      if (side == COLOURS.WHITE) {
+      if (side == COLORS.WHITE) {
         GameBoard.enPassant = from + 10;
       } else {
         GameBoard.enPassant = from - 10;
@@ -164,7 +164,7 @@ function TakeMove() {
   HASH_SIDE();
 
   if ((MOVE_FLAG_EN_PASSANT & move) != 0) {
-    if (GameBoard.side == COLOURS.WHITE) {
+    if (GameBoard.side == COLORS.WHITE) {
       AddPiece(to - 10, PIECES.bPawn);
     } else {
       AddPiece(to + 10, PIECES.wPawn);
@@ -199,7 +199,7 @@ function TakeMove() {
     ClearPiece(from);
     AddPiece(
       from,
-      PieceCol[PROMOTED(move)] == COLOURS.WHITE ? PIECES.wPawn : PIECES.bPawn
+      PieceCol[PROMOTED(move)] == COLORS.WHITE ? PIECES.wPawn : PIECES.bPawn
     );
   }
 }
