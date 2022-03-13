@@ -86,7 +86,7 @@ const MAX_DEPTH = 64;
 const FilesBrd = new Array(BRD_SQ_NUM);
 const RanksBrd = new Array(BRD_SQ_NUM);
 
-const START_FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR b KQkq - 0 1";
+const START_FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
 const PieceChar = ".PNBRQKpnbrqk";
 const SideChar = "wb-";
@@ -336,6 +336,18 @@ function SQ120(sq64) {
 function PIECE_INDEX(pce, pceNum) {
   return pce * 10 + pceNum;
 }
+
+const Kings = [PIECES.wKing, PIECES.bKing];
+
+const CastlePerm = [
+  15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
+  15, 15, 13, 15, 15, 15, 12, 15, 15, 14, 15, 15, 15, 15, 15, 15, 15, 15, 15,
+  15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
+  15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
+  15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 7, 15, 15, 15, 3,
+  15, 15, 11, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
+  15, 15, 15, 15, 15,
+];
 
 function FROM_SQ(m) {
   return m & 0x7f;

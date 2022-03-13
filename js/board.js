@@ -4,6 +4,7 @@ GameBoard.pieces = new Array(BRD_SQ_NUM);
 GameBoard.side = COLORS.WHITE;
 GameBoard.fiftyMoveCnt = 0;
 GameBoard.historyPly = 0;
+GameBoard.history = [];
 GameBoard.ply = 0;
 GameBoard.enPassant = 0;
 GameBoard.castlePermission = 0;

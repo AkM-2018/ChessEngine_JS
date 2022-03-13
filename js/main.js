@@ -6,6 +6,12 @@ $(function () {
   GenerateMoves();
   PrintMoveList();
   CheckBoard();
+  MakeMove(GameBoard.moveList[0]);
+  PrintBoard();
+  CheckBoard();
+  TakeMove();
+  PrintBoard();
+  CheckBoard();
 });
 
 function InitFilesRanksBrd() {
@@ -67,9 +73,23 @@ function InitSq120ToSq64() {
   }
 }
 
+function InitBoardVariables() {
+  let index = 0;
+  for (index = 0; index < MAX_GAME_MOVES; index++) {
+    GameBoard.history.push({
+      move: NO_MOVE,
+      castlePermission: 0,
+      enPassant: 0,
+      fiftyMove: 0,
+      posKey: 0,
+    });
+  }
+}
+
 function init() {
   console.log("init() called");
   InitFilesRanksBrd();
   InitHashKeys();
   InitSq120ToSq64();
+  InitBoardVariables();
 }
