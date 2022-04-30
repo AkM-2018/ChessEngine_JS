@@ -5,17 +5,20 @@ $(function () {
   PrintBoard();
 });
 
+// Initialize FilesBrd and RanksBrd
 function InitFilesRanksBrd() {
   let index = 0;
   let file = FILES.FILE_A;
   let rank = RANKS.RANK_1;
   let sq = SQUARES.A1;
 
+  // Init everything as OFF_BOARD
   for (index = 0; index < BRD_SQ_NUM; index++) {
     FilesBrd[index] = SQUARES.OFF_BOARD;
     RanksBrd[index] = SQUARES.OFF_BOARD;
   }
 
+  // Updates the file and rank at particular square
   for (rank = RANKS.RANK_1; rank <= RANKS.RANK_8; rank++) {
     for (file = FILES.FILE_A; file <= FILES.FILE_H; file++) {
       sq = FileRank2Sq(file, rank);
@@ -25,6 +28,7 @@ function InitFilesRanksBrd() {
   }
 }
 
+// Initialize random numbers in PieceKeys, SideKey and CastleKeys
 function InitHashKeys() {
   let index = 0;
 
@@ -39,6 +43,7 @@ function InitHashKeys() {
   }
 }
 
+// Initialize arrays to convert 120 board to 64 board and vice-versa
 function InitSq120ToSq64() {
   let index = 0;
   let file = FILES.FILE_A;
@@ -46,14 +51,17 @@ function InitSq120ToSq64() {
   let sq = SQUARES.A1;
   let sq64 = 0;
 
+  // Filling extreme value first
   for (index = 0; index < BRD_SQ_NUM; index++) {
     Sq120toSq64[index] = 65;
   }
 
+  // Filling extreme value first
   for (index = 0; index < 64; index++) {
     Sq64toSq120[index] = 120;
   }
 
+  // Init with actual values
   for (rank = RANKS.RANK_1; rank <= RANKS.RANK_8; rank++) {
     for (file = FILES.FILE_A; file <= FILES.FILE_H; file++) {
       sq = FileRank2Sq(file, rank);
@@ -77,6 +85,7 @@ function InitBoardVariables() {
   }
 }
 
+// Calls the other init methods
 function init() {
   console.log("init() called");
   InitFilesRanksBrd();

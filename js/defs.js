@@ -79,11 +79,18 @@ const BOOL = {
   TRUE: 1,
 };
 
+// Maximum possible moves to be played in a chess game
 const MAX_GAME_MOVES = 2048;
+// Maximum moves for a position
 const MAX_POSITION_MOVES = 256;
+// Max depth the engine searches to
 const MAX_DEPTH = 64;
+const INFINITE = 30000;
+const MATE = 29000;
 
+// Stores which file it is in 120 square board
 const FilesBrd = new Array(BRD_SQ_NUM);
+// Stores which rank it is in 120 square board
 const RanksBrd = new Array(BRD_SQ_NUM);
 
 const START_FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
@@ -93,11 +100,12 @@ const SideChar = "wb-";
 const RankChar = "12345678";
 const FileChar = "abcdefgh";
 
+// Given a file and rank, returns the sq no in 120 board
 function FileRank2Sq(file, rank) {
   return 21 + file + rank * 10;
 }
 
-// Pawn
+// Not Pawn
 const PieceBig = [
   BOOL.FALSE,
   BOOL.FALSE,
@@ -114,7 +122,7 @@ const PieceBig = [
   BOOL.TRUE,
 ];
 
-// Queen or Rook
+// Queen or Rook or King
 const PieceMaj = [
   BOOL.FALSE,
   BOOL.FALSE,
@@ -148,10 +156,12 @@ const PieceMin = [
   BOOL.FALSE,
 ];
 
+// Value of a piece, for the algorithm
 const PieceVal = [
   0, 100, 325, 325, 550, 1000, 50000, 100, 325, 325, 550, 1000, 50000,
 ];
 
+// Color of a piece
 const PieceCol = [
   COLORS.BOTH,
   COLORS.WHITE,
@@ -266,11 +276,13 @@ const PieceSlides = [
 
 const KnightDir = [-8, -19, -21, -12, 8, 19, 21, 12];
 const RookDir = [-1, -10, 1, 10];
-const BishopDir = [-9, -11, 9, 11];
+const BishopDir = [-9, -11, 11, 9];
 const KingDir = [-1, -10, 1, 10, -9, -11, 11, 9];
 
+// How many directions can piece move
 const DirNum = [0, 0, 8, 4, 4, 8, 8, 0, 8, 4, 4, 8, 8];
 
+// Directions for a piece
 const PieceDir = [
   0,
   0,
@@ -309,14 +321,20 @@ const LoopSlidePiece = [
 ];
 const LoopSlideIndex = [0, 4];
 
+// key of a piece on a particular square
+// index 0-9 will be used for en-passant square
 const PieceKeys = new Array(14 * 120);
 let SideKey;
-const CastleKeys = new Array(26);
+const CastleKeys = new Array(16);
 
+// Arrays converts index from 120 board to 64 board and vice-versa
 const Sq120toSq64 = new Array(BRD_SQ_NUM);
 const Sq64toSq120 = new Array(64);
 
+// Random 32-bit number
 function RAND_32() {
+  // Four random numbers filling 8-bits each and shifting them appropriately
+  // Good coverage of all the 32-bits
   return (
     (Math.floor(Math.random() * 255 + 1) << 23) |
     (Math.floor(Math.random() * 255 + 1) << 16) |
@@ -325,16 +343,30 @@ function RAND_32() {
   );
 }
 
+const Mirror64 = [
+  56, 57, 58, 59, 60, 61, 62, 63, 48, 49, 50, 51, 52, 53, 54, 55, 40, 41, 42,
+  43, 44, 45, 46, 47, 32, 33, 34, 35, 36, 37, 38, 39, 24, 25, 26, 27, 28, 29,
+  30, 31, 16, 17, 18, 19, 20, 21, 22, 23, 8, 9, 10, 11, 12, 13, 14, 15, 0, 1, 2,
+  3, 4, 5, 6, 7,
+];
+
+// Returns the 64-board equivalent of 120-board index
 function SQ64(sq120) {
   return Sq120toSq64[sq120];
 }
 
+// Returns the 120-board equivalent of 64-board index
 function SQ120(sq64) {
   return Sq64toSq120[sq64];
 }
 
+// Gives the index of the piece in the pieceList array
 function PIECE_INDEX(pce, pceNum) {
   return pce * 10 + pceNum;
+}
+
+function MIRROR64(sq) {
+  return Mirror64[sq];
 }
 
 const Kings = [PIECES.wKing, PIECES.bKing];
@@ -349,18 +381,24 @@ const CastlePerm = [
   15, 15, 15, 15, 15,
 ];
 
+// Single number stores all the information a move
+// From the right, first 7 bits store the from-square
 function FROM_SQ(m) {
   return m & 0x7f;
 }
 
+// Next 7 bits store the to-square
 function TO_SQ(m) {
   return (m >> 7) & 0x7f;
 }
 
+// Next 4 bits cover the captured piece
 function CAPTURED(m) {
   return (m >> 14) & 0xf;
 }
 
+// Next 2 bits are for en-passant and pawn-start move
+// The next 4 are for which piece we promote to
 function PROMOTED(m) {
   return (m >> 20) & 0xf;
 }
@@ -374,6 +412,7 @@ const MOVE_FLAG_PROMOTED = 0xf00000;
 
 const NO_MOVE = 0;
 
+// Returns if a square is off-board
 function SQ_OFF_BOARD(sq) {
   if (FilesBrd[sq] == SQUARES.OFF_BOARD) {
     return BOOL.TRUE;

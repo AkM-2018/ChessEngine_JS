@@ -1,7 +1,9 @@
+// Prints the algebraic notation on the square
 function PrintSq(sq) {
   return FileChar[FilesBrd[sq]] + RankChar[RanksBrd[sq]];
 }
 
+// Given a number which represents move, prints the move in algabraic notation
 function PrintMove(move) {
   let moveStr;
 
@@ -40,6 +42,7 @@ function PrintMove(move) {
   return moveStr;
 }
 
+// Print all the moves for a current ply
 function PrintMoveList() {
   let index, move;
   console.log("Movelist:");
@@ -50,5 +53,6 @@ function PrintMoveList() {
     index++
   ) {
     move = GameBoard.moveList[index];
+    console.log(PrintMove(move));
   }
 }

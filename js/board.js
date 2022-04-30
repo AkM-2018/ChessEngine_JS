@@ -1,26 +1,49 @@
 let GameBoard = {};
 
+// contains the state of the board according to numbering in PIECES
 GameBoard.pieces = new Array(BRD_SQ_NUM);
+// side playing the move
 GameBoard.side = COLORS.WHITE;
+// player can claim draw if 50 moves are played without pawn move or capture
+// if GameBoard.fiftyMoveCnt == 100, game is draw
 GameBoard.fiftyMoveCnt = 0;
+// maintain the count of all the half-moves
+// used to index an array where we can take back moves
 GameBoard.historyPly = 0;
 GameBoard.history = [];
+// no of half moves made in the search tree
 GameBoard.ply = 0;
+// stores the value of the en-passant square
 GameBoard.enPassant = 0;
+// integer which stores the castle permission for the whole gameboard
 GameBoard.castlePermission = 0;
-GameBoard.material = new Array(2); // WHITE, BLACK material of pieces
-GameBoard.pieceNum = new Array(13); // no of pieces of certain type on the board
+// stores total piece value of each side
+GameBoard.material = new Array(2);
+// no of pieces of certain type on the board
+// indexed by the PIECES
+GameBoard.pieceNum = new Array(13);
+// contains the position(120 based) of pieces on the board
+// white pawns start from index 10-19, white knight are on index 20, 29...
+// every piece is given 10 index in the array. first 10(0-9) are left blank
+// no of times to loop can be obtained from pieceNum of that piece
 GameBoard.pieceList = new Array(14 * 10);
-GameBoard.posKey = 0; // Its for draw detection. We can check if we repeated some moves
+// unique number which represents the position on the board
+// its for repetition detection. 3 time repetition leads to draw
+GameBoard.posKey = 0;
+// list of moves
 GameBoard.moveList = new Array(MAX_DEPTH * MAX_POSITION_MOVES);
+// scores of the moves
 GameBoard.moveScores = new Array(MAX_DEPTH * MAX_POSITION_MOVES);
+// index where the moves for certain depth starts
 GameBoard.moveListStart = new Array(MAX_DEPTH);
 
+// Checks if all the methods are properly working
 function CheckBoard() {
   let t_pieceNum = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
   let t_material = [0, 0];
   let sq64, t_piece, t_pce_num, sq120, color, pcount;
 
+  // check for every piece if pieceList and GameBoard.pieces match
   for (t_piece = PIECES.wPawn; t_piece <= PIECES.bKing; t_piece++) {
     for (t_pce_num = 0; t_pce_num < GameBoard.pieceNum[t_piece]; t_pce_num++) {
       sq120 = GameBoard.pieceList[PIECE_INDEX(t_piece, t_pce_num)];
@@ -31,6 +54,7 @@ function CheckBoard() {
     }
   }
 
+  // populate temp pieceNum and temp material array
   for (sq64 = 0; sq64 < 64; sq64++) {
     sq120 = SQ120(sq64);
     t_piece = GameBoard.pieces[sq120];
@@ -38,6 +62,7 @@ function CheckBoard() {
     t_material[PieceCol[t_piece]] += PieceVal[t_piece];
   }
 
+  // check for every piece if the no of pieces match in GameBoard and temp pieceNum
   for (t_piece = PIECES.wPawn; t_piece <= PIECES.bKing; t_piece++) {
     if (t_pieceNum[t_piece] != GameBoard.pieceNum[t_piece]) {
       console.log("Error t_pieceNum!");
@@ -45,6 +70,7 @@ function CheckBoard() {
     }
   }
 
+  // check if total piece values match in Gameboard and temp material
   if (
     t_material[COLORS.WHITE] != GameBoard.material[COLORS.WHITE] ||
     t_material[COLORS.BLACK] != GameBoard.material[COLORS.BLACK]
@@ -53,11 +79,13 @@ function CheckBoard() {
     return BOOL.FALSE;
   }
 
+  // check if Gameboard side is valid
   if (GameBoard.side != COLORS.WHITE && GameBoard.side != COLORS.BLACK) {
     console.log("Error Gameboard.side");
     return BOOL.FALSE;
   }
 
+  // check if Gameboard posKey matches with generated posKey
   if (GeneratePosKey() != GameBoard.posKey) {
     console.log("Error Gameboard.poskey");
     return BOOL.FALSE;
@@ -66,6 +94,7 @@ function CheckBoard() {
   return BOOL.TRUE;
 }
 
+// Prints the board to the console
 function PrintBoard() {
   let sq, file, rank, piece;
 
@@ -101,11 +130,14 @@ function PrintBoard() {
   console.log("key: " + GameBoard.posKey.toString(16));
 }
 
+// Returns a finalKey with hashes info of Pieces, Side and CastlePerm
 function GeneratePosKey() {
   let sq = 0;
   let finalKey = 0;
   let piece = PIECES.EMPTY;
 
+  // Hash into finalKey the unique number for a given piece on a given square
+  // Hash the PieceKeys
   for (sq = 0; sq < BRD_SQ_NUM; sq++) {
     piece = GameBoard.pieces[sq];
     if (piece != PIECES.EMPTY && piece != SQUARES.OFF_BOARD) {
@@ -113,49 +145,58 @@ function GeneratePosKey() {
     }
   }
 
+  // Hash the SideKey
   if (GameBoard.side == COLORS.WHITE) {
     finalKey ^= SideKey;
   }
 
+  // Hash the EnPassant square
   if (GameBoard.enPassant != SQUARES.NO_SQ) {
     finalKey ^= PieceKeys[GameBoard.enPassant];
   }
 
+  // Hash the CastleKeys
   finalKey ^= CastleKeys[GameBoard.castlePermission];
 
   return finalKey;
 }
 
+// Prints for every piece where it sits
 function PrintPieceLists() {
   let piece, pceNum;
 
   for (piece = PIECES.wPawn; piece <= PIECES.bKing; piece++) {
     for (pceNum = 0; pceNum < GameBoard.pieceNum[piece]; pceNum++) {
-      // console.log(
-      //   "Piece " +
-      //     PieceChar[piece] +
-      //     " on " +
-      //     PrintSq(GameBoard.pieceList[PIECE_INDEX(piece, pceNum)])
-      // );
+      console.log(
+        "Piece " +
+          PieceChar[piece] +
+          " on " +
+          PrintSq(GameBoard.pieceList[PIECE_INDEX(piece, pceNum)])
+      );
     }
   }
 }
 
+// Updates the values of material, pieceList and pieceNum after a move
 function UpdateListsMaterial() {
   let piece, sq, index, color;
 
-  for (index = 0; index < 14 * 120; index++) {
+  // Resets pieceList
+  for (index = 0; index < 14 * 10; index++) {
     GameBoard.pieceList[index] = PIECES.EMPTY;
   }
 
+  // Resets total piece values
   for (index = 0; index < 2; index++) {
     GameBoard.material[index] = 0;
   }
 
+  // Resets no of pieces
   for (index = 0; index < 13; index++) {
     GameBoard.pieceNum[index] = 0;
   }
 
+  // Updates total piece values, pieceList and no of pieces
   for (index = 0; index < 64; index++) {
     sq = SQ120(index);
     piece = GameBoard.pieces[sq];
@@ -166,21 +207,23 @@ function UpdateListsMaterial() {
       GameBoard.pieceNum[piece]++;
     }
   }
-
-  PrintPieceLists();
 }
 
+// Resets the Gameboard
 function ResetBoard() {
   let index = 0;
 
+  // Make all squares OFF_BOARD
   for (index = 0; index < BRD_SQ_NUM; index++) {
     GameBoard.pieces[index] = SQUARES.OFF_BOARD;
   }
 
+  // Make internal squares EMPTY
   for (index = 0; index < 64; index++) {
     GameBoard.pieces[SQ120(index)] = PIECES.EMPTY;
   }
 
+  // Reset settings
   GameBoard.side = COLORS.BOTH;
   GameBoard.enPassant = SQUARES.NO_SQ;
   GameBoard.fiftyMoveCnt = 0;
@@ -191,6 +234,7 @@ function ResetBoard() {
   GameBoard.moveListStart[GameBoard.ply] = 0;
 }
 
+// Given a fen-string changes the GameBoard accordingly
 function ParseFen(fen) {
   ResetBoard();
 
@@ -202,6 +246,7 @@ function ParseFen(fen) {
   let sq120 = 0;
   let fenCnt = 0;
 
+  // Traverse the chess-board part of the fen string
   while (rank >= RANKS.RANK_1 && fenCnt < fen.length) {
     count = 1;
 
@@ -267,6 +312,7 @@ function ParseFen(fen) {
         return;
     }
 
+    // Updates square in Gameboard as empty count no of times
     for (i = 0; i < count; i++) {
       sq120 = FileRank2Sq(file, rank);
       GameBoard.pieces[sq120] = piece;
@@ -276,9 +322,11 @@ function ParseFen(fen) {
     fenCnt++;
   }
 
+  // Updates color
   GameBoard.side = fen[fenCnt] == "w" ? COLORS.WHITE : COLORS.BLACK;
   fenCnt += 2;
 
+  // Updates castle permissions
   for (i = 0; i < 4; i++) {
     if (fen[fenCnt] == " ") break;
 
@@ -303,12 +351,10 @@ function ParseFen(fen) {
   }
   fenCnt++;
 
+  // Updates en passant status
   if (fen[fenCnt] != "-") {
     file = fen[fenCnt].charCodeAt() - "a".charCodeAt();
     rank = fen[fenCnt + 1].charCodeAt() - "1".charCodeAt();
-    console.log(
-      "fen[fenCnt]: " + fen[fenCnt] + " File: " + file + " Rank: " + rank
-    );
     GameBoard.enPassant = FileRank2Sq(file, rank);
   }
 
@@ -317,6 +363,8 @@ function ParseFen(fen) {
   PrintSqAttacked();
 }
 
+// Prints the board on console
+// Squares which can be attacked by the playing side are marked with "X"
 function PrintSqAttacked() {
   let sq, file, rank, piece;
 
@@ -335,9 +383,11 @@ function PrintSqAttacked() {
   console.log("");
 }
 
+// Check if this square can be attacked by a piece
 function SqAttacked(sq, side) {
   let pce, t_sq, index;
 
+  // Can a pawn attack this square?
   if (side == COLORS.WHITE) {
     if (
       GameBoard.pieces[sq - 11] == PIECES.wPawn ||
@@ -354,6 +404,7 @@ function SqAttacked(sq, side) {
     }
   }
 
+  // Can a knight attack this square?
   for (index = 0; index < 8; index++) {
     pce = GameBoard.pieces[sq + KnightDir[index]];
     if (
@@ -365,6 +416,7 @@ function SqAttacked(sq, side) {
     }
   }
 
+  // Can a rook or queen(not moving diagonally) attack this square?
   for (index = 0; index < 4; index++) {
     dir = RookDir[index];
     t_sq = sq + dir;
@@ -381,6 +433,7 @@ function SqAttacked(sq, side) {
     }
   }
 
+  // Can a bishop or queen(only moving diagonally) attack this square?
   for (index = 0; index < 4; index++) {
     dir = BishopDir[index];
     t_sq = sq + dir;
@@ -397,6 +450,7 @@ function SqAttacked(sq, side) {
     }
   }
 
+  // Can the king attack this square?
   for (index = 0; index < 8; index++) {
     pce = GameBoard.pieces[sq + KingDir[index]];
     if (
