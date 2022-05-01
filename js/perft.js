@@ -1,7 +1,9 @@
 let perft_leafNodes;
 
+// Checks total leaf nodes for a certain depth for a particular board position
 function Perft(depth) {
   if (depth == 0) {
+    // Increment leafNode count when leaf node is encountered
     perft_leafNodes++;
     return;
   }
@@ -27,6 +29,8 @@ function Perft(depth) {
   return;
 }
 
+// Calls Perft function
+// Prints leaf nodes for every starting move
 function PerftTest(depth) {
   PrintBoard();
   console.log("Starting Test To Depth:" + depth);

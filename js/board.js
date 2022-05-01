@@ -10,6 +10,8 @@ GameBoard.fiftyMoveCnt = 0;
 // maintain the count of all the half-moves
 // used to index an array where we can take back moves
 GameBoard.historyPly = 0;
+// index contains {move, key, enPas, fiftyMove, castlePerm}
+// can be used to move the board back to a previous state
 GameBoard.history = [];
 // no of half moves made in the search tree
 GameBoard.ply = 0;

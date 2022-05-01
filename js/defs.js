@@ -371,6 +371,7 @@ function MIRROR64(sq) {
 
 const Kings = [PIECES.wKing, PIECES.bKing];
 
+// For updating the GameBoard.castlePerm on every move
 const CastlePerm = [
   15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
   15, 15, 13, 15, 15, 15, 12, 15, 15, 14, 15, 15, 15, 15, 15, 15, 15, 15, 15,
@@ -420,18 +421,22 @@ function SQ_OFF_BOARD(sq) {
   return BOOL.FALSE;
 }
 
+// Hash a piece in/out
 function HASH_PIECE(pce, sq) {
   GameBoard.posKey ^= PieceKeys[pce * 120 + sq];
 }
 
+// Hash the castling permission
 function HASH_CASTLING() {
   GameBoard.posKey ^= CastleKeys[GameBoard.castlePermission];
 }
 
+// Hash side
 function HASH_SIDE() {
   GameBoard.posKey ^= SideKey;
 }
 
+// Hash en-passant
 function HASH_ENPASSANT() {
   GameBoard.posKey ^= PieceKeys[GameBoard.enPassant];
 }

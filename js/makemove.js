@@ -1,3 +1,4 @@
+// Remove a piece from the board
 function ClearPiece(sq) {
   let pce = GameBoard.pieces[sq];
   let col = PieceCol[pce];
@@ -21,6 +22,7 @@ function ClearPiece(sq) {
     GameBoard.pieceList[PIECE_INDEX(pce, GameBoard.pieceNum[pce])];
 }
 
+// Add a piece to the board
 function AddPiece(sq, pce) {
   let col = PieceCol[pce];
 
@@ -32,6 +34,7 @@ function AddPiece(sq, pce) {
   GameBoard.pieceNum[pce]++;
 }
 
+// Moves a piece on the board
 function MovePiece(from, to) {
   let index = 0;
   let pce = GameBoard.pieces[from];
@@ -50,20 +53,25 @@ function MovePiece(from, to) {
   }
 }
 
+// Making a move
 function MakeMove(move) {
   let from = FROM_SQ(move);
   let to = TO_SQ(move);
   let side = GameBoard.side;
 
+  // Add position key to history
   GameBoard.history[GameBoard.historyPly].posKey = GameBoard.posKey;
 
+  // Capture pawn during en-passant
   if ((move & MOVE_FLAG_EN_PASSANT) != 0) {
     if (side == COLORS.WHITE) {
       ClearPiece(to - 10);
     } else {
       ClearPiece(to + 10);
     }
-  } else if ((move & MOVE_FLAG_CASTLING) != 0) {
+  }
+  // Move the rook during castling
+  else if ((move & MOVE_FLAG_CASTLING) != 0) {
     switch (to) {
       case SQUARES.C1:
         MovePiece(SQUARES.A1, SQUARES.D1);
@@ -82,21 +90,26 @@ function MakeMove(move) {
     }
   }
 
+  // Hash-out the en-passant and castle permission of the previous move
   if (GameBoard.enPassant != SQUARES.NO_SQ) HASH_ENPASSANT();
   HASH_CASTLING();
 
+  // Update other values in history array
   GameBoard.history[GameBoard.historyPly].move = move;
   GameBoard.history[GameBoard.historyPly].fiftyMove = GameBoard.fiftyMove;
   GameBoard.history[GameBoard.historyPly].enPassant = GameBoard.enPassant;
   GameBoard.history[GameBoard.historyPly].castlePermission =
     GameBoard.castlePermission;
 
+  // Update the castle permission and en-passant
   GameBoard.castlePermission &= CastlePerm[from];
   GameBoard.castlePermission &= CastlePerm[to];
   GameBoard.enPassant = SQUARES.NO_SQ;
 
+  // Hash-in the new castle permission
   HASH_CASTLING();
 
+  // Get the captured piece
   let captured = CAPTURED(move);
   GameBoard.fiftyMove++;
 
@@ -108,6 +121,7 @@ function MakeMove(move) {
   GameBoard.historyPly++;
   GameBoard.ply++;
 
+  // Pawn start move
   if (PiecePawn[GameBoard.pieces[from]] == BOOL.TRUE) {
     GameBoard.fiftyMove = 0;
     if ((move & MOVE_FLAG_PAWN_START) != 0) {
@@ -122,6 +136,7 @@ function MakeMove(move) {
 
   MovePiece(from, to);
 
+  // Pawn promotions
   let promotedPiece = PROMOTED(move);
   if (promotedPiece != PIECES.EMPTY) {
     ClearPiece(to);
@@ -131,6 +146,7 @@ function MakeMove(move) {
   GameBoard.side ^= 1;
   HASH_SIDE();
 
+  // If king is in check, take back the current move
   if (
     SqAttacked(GameBoard.pieceList[PIECE_INDEX(Kings[side], 0)], GameBoard.side)
   ) {
@@ -141,10 +157,12 @@ function MakeMove(move) {
   return BOOL.TRUE;
 }
 
+// Taking back a made move
 function TakeMove() {
   GameBoard.historyPly--;
   GameBoard.ply--;
 
+  // Get the previous move from history array
   let move = GameBoard.history[GameBoard.historyPly].move;
   let from = FROM_SQ(move);
   let to = TO_SQ(move);
@@ -152,6 +170,7 @@ function TakeMove() {
   if (GameBoard.enPassant != SQUARES.NO_SQ) HASH_ENPASSANT();
   HASH_CASTLING();
 
+  // Update values according to the previous move
   GameBoard.castlePermission =
     GameBoard.history[GameBoard.historyPly].castlePermission;
   GameBoard.fiftyMove = GameBoard.history[GameBoard.historyPly].fiftyMove;
@@ -163,13 +182,16 @@ function TakeMove() {
   GameBoard.side ^= 1;
   HASH_SIDE();
 
+  // Take back an en-passant move
   if ((MOVE_FLAG_EN_PASSANT & move) != 0) {
     if (GameBoard.side == COLORS.WHITE) {
       AddPiece(to - 10, PIECES.bPawn);
     } else {
       AddPiece(to + 10, PIECES.wPawn);
     }
-  } else if ((MOVE_FLAG_CASTLING & move) != 0) {
+  }
+  // Take back a castling move
+  else if ((MOVE_FLAG_CASTLING & move) != 0) {
     switch (to) {
       case SQUARES.C1:
         MovePiece(SQUARES.D1, SQUARES.A1);
@@ -188,13 +210,16 @@ function TakeMove() {
     }
   }
 
+  // Move the piece back
   MovePiece(to, from);
 
+  // Add back the captured piece
   let captured = CAPTURED(move);
   if (captured != PIECES.EMPTY) {
     AddPiece(to, captured);
   }
 
+  // Take back a pawn promotion
   if (PROMOTED(move) != PIECES.EMPTY) {
     ClearPiece(from);
     AddPiece(

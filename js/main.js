@@ -72,6 +72,7 @@ function InitSq120ToSq64() {
   }
 }
 
+// Initializes the history array
 function InitBoardVariables() {
   let index = 0;
   for (index = 0; index < MAX_GAME_MOVES; index++) {
