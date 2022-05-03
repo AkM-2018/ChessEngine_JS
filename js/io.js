@@ -56,3 +56,44 @@ function PrintMoveList() {
     console.log(PrintMove(move));
   }
 }
+
+function ParseMove(from, to) {
+  GenerateMoves();
+
+  let move = NO_MOVE;
+  let promotedPiece = PIECES.EMPTY;
+  let found = BOOL.FALSE;
+
+  for (
+    index = GameBoard.moveListStart[GameBoard.ply];
+    index < GameBoard.moveListStart[GameBoard.ply + 1];
+    index++
+  ) {
+    move = GameBoard.moveList[index];
+    if (FROM_SQ(move) == from && TO_SQ(move) == to) {
+      promotedPiece = PROMOTED(move);
+      if (promotedPiece != PIECES.EMPTY) {
+        if (
+          (promotedPiece == PIECES.wQueen && GameBoard.side == COLORS.WHITE) ||
+          (promotedPiece == PIECES.bQueen && GameBoard.side == COLORS.BLACK)
+        ) {
+          found = BOOL.TRUE;
+          break;
+        }
+        continue;
+      }
+      found = BOOL.TRUE;
+      break;
+    }
+  }
+
+  if (found == BOOL.TRUE) {
+    if (MakeMove(move) == BOOL.FALSE) {
+      return NO_MOVE;
+    }
+    TakeMove();
+    return move;
+  }
+
+  return NO_MOVE;
+}

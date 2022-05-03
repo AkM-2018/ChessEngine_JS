@@ -87,6 +87,7 @@ const MAX_POSITION_MOVES = 256;
 const MAX_DEPTH = 64;
 const INFINITE = 30000;
 const MATE = 29000;
+const PV_ENTRIES = 10000;
 
 // Stores which file it is in 120 square board
 const FilesBrd = new Array(BRD_SQ_NUM);
@@ -343,6 +344,7 @@ function RAND_32() {
   );
 }
 
+// Mirror values in the PieceTables used for evaluation of position
 const Mirror64 = [
   56, 57, 58, 59, 60, 61, 62, 63, 48, 49, 50, 51, 52, 53, 54, 55, 40, 41, 42,
   43, 44, 45, 46, 47, 32, 33, 34, 35, 36, 37, 38, 39, 24, 25, 26, 27, 28, 29,
@@ -365,6 +367,7 @@ function PIECE_INDEX(pce, pceNum) {
   return pce * 10 + pceNum;
 }
 
+// Returns the mirror value of a square
 function MIRROR64(sq) {
   return Mirror64[sq];
 }
@@ -440,3 +443,12 @@ function HASH_SIDE() {
 function HASH_ENPASSANT() {
   GameBoard.posKey ^= PieceKeys[GameBoard.enPassant];
 }
+
+let GameController = {};
+GameController.engineSide = COLORS.BOTH;
+GameController.playerSide = COLORS.BOTH;
+GameController.gameOver = BOOL.FALSE;
+
+let UserMove = {};
+UserMove.from = SQUARES.NO_SQ;
+UserMove.to = SQUARES.NO_SQ;

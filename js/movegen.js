@@ -1,3 +1,44 @@
+// Most valuable victim - Least valuable attacker
+const MvvLvaValue = [
+  0, 100, 200, 300, 400, 500, 600, 100, 200, 300, 400, 500, 600,
+];
+const MvvLvaScores = new Array(14 * 14);
+
+function InitMvvLva() {
+  let Attacker, Victim;
+
+  for (Attacker = PIECES.wPawn; Attacker <= PIECES.bKing; Attacker++) {
+    for (Victim = PIECES.wPawn; Victim <= PIECES.bKing; Victim++) {
+      MvvLvaScores[Victim * 14 + Attacker] =
+        MvvLvaValue[Victim] + 6 - MvvLvaValue[Attacker] / 100;
+    }
+  }
+}
+
+// Check if a move is a possible move to play
+function MoveExists(move) {
+  GenerateMoves();
+
+  let index = 0;
+  let moveFound = NO_MOVE;
+
+  for (
+    index = GameBoard.moveListStart[GameBoard.ply];
+    index < GameBoard.moveListStart[GameBoard.ply + 1];
+    index++
+  ) {
+    moveFound = GameBoard.moveList[index];
+    if (MakeMove(moveFound) == BOOL.FALSE) {
+      continue;
+    }
+    TakeMove();
+    if (move == moveFound) {
+      return BOOL.TRUE;
+    }
+  }
+  return BOOL.FALSE;
+}
+
 // Returns number which represents infomation about the move
 // Flag represents en-passant move, pawn-start move and castle info
 function MOVE(from, to, captured, promoted, flag) {
@@ -7,19 +48,35 @@ function MOVE(from, to, captured, promoted, flag) {
 // Add capture move to moveList and initializes moveScores
 function AddCaptureMove(move) {
   GameBoard.moveList[GameBoard.moveListStart[GameBoard.ply + 1]] = move;
-  GameBoard.moveScores[GameBoard.moveListStart[GameBoard.ply + 1]++] = 0;
+  GameBoard.moveScores[GameBoard.moveListStart[GameBoard.ply + 1]++] =
+    MvvLvaScores[CAPTURED(move) * 14 + GameBoard.pieces[FROM_SQ(move)]] +
+    1000000;
 }
 
 // Add quiet move to moveList and initializes moveScores
 function AddQuietMove(move) {
   GameBoard.moveList[GameBoard.moveListStart[GameBoard.ply + 1]] = move;
-  GameBoard.moveScores[GameBoard.moveListStart[GameBoard.ply + 1]++] = 0;
+  GameBoard.moveScores[GameBoard.moveListStart[GameBoard.ply + 1]] = 0;
+
+  if (move == GameBoard.searchKillers[GameBoard.ply]) {
+    GameBoard.moveScores[GameBoard.moveListStart[GameBoard.ply + 1]] = 900000;
+  } else if (move == GameBoard.searchKillers[MAX_DEPTH + GameBoard.ply]) {
+    GameBoard.moveScores[GameBoard.moveListStart[GameBoard.ply + 1]] = 800000;
+  } else {
+    GameBoard.moveScores[GameBoard.moveListStart[GameBoard.ply + 1]] =
+      GameBoard.searchHistory[
+        GameBoard.pieces[FROM_SQ(move)] * BRD_SQ_NUM + TO_SQ(move)
+      ];
+  }
+
+  GameBoard.moveListStart[GameBoard.ply + 1]++;
 }
 
 // Add en-passant move to moveList and initializes moveScores
 function AddEnPassantMove(move) {
   GameBoard.moveList[GameBoard.moveListStart[GameBoard.ply + 1]] = move;
-  GameBoard.moveScores[GameBoard.moveListStart[GameBoard.ply + 1]++] = 0;
+  GameBoard.moveScores[GameBoard.moveListStart[GameBoard.ply + 1]++] =
+    105 + 1000000;
 }
 
 // Capture moves for white pawn
@@ -326,6 +383,150 @@ function GenerateMoves() {
             break;
           }
           AddQuietMove(MOVE(sq, t_sq, PIECES.EMPTY, PIECES.EMPTY, 0));
+          t_sq += dir;
+        }
+      }
+    }
+    pce = LoopSlidePiece[pceIndex++];
+  }
+}
+
+// Generates capturing moves and updates them in moveList and moveScores
+function GenerateCaptures() {
+  // moveListStart gives the index for the first move at a given ply
+  GameBoard.moveListStart[GameBoard.ply + 1] =
+    GameBoard.moveListStart[GameBoard.ply];
+
+  let pceType, pceNum, sq, pceIndex, pce, t_sq, dir;
+
+  // Treats pawn moves, en-passant and castling moves seperately
+  if (GameBoard.side == COLORS.WHITE) {
+    pceType = PIECES.wPawn;
+
+    for (pceNum = 0; pceNum < GameBoard.pieceNum[pceType]; pceNum++) {
+      sq = GameBoard.pieceList[PIECE_INDEX(pceType, pceNum)];
+
+      // Pawn capture move
+      if (
+        SQ_OFF_BOARD(sq + 9) == BOOL.FALSE &&
+        PieceCol[GameBoard.pieces[sq + 9]] == COLORS.BLACK
+      ) {
+        AddWhitePawnCaptureMove(sq, sq + 9, GameBoard.pieces[sq + 9]);
+      }
+
+      // Pawn capture move
+      if (
+        SQ_OFF_BOARD(sq + 11) == BOOL.FALSE &&
+        PieceCol[GameBoard.pieces[sq + 11]] == COLORS.BLACK
+      ) {
+        AddWhitePawnCaptureMove(sq, sq + 11, GameBoard.pieces[sq + 11]);
+      }
+
+      // En-passant move
+      if (GameBoard.enPassant != SQUARES.NO_SQ) {
+        if (sq + 9 == GameBoard.enPassant) {
+          AddEnPassantMove(
+            MOVE(sq, sq + 9, PIECES.EMPTY, PIECES.EMPTY, MOVE_FLAG_EN_PASSANT)
+          );
+        }
+        if (sq + 11 == GameBoard.enPassant) {
+          AddEnPassantMove(
+            MOVE(sq, sq + 11, PIECES.EMPTY, PIECES.EMPTY, MOVE_FLAG_EN_PASSANT)
+          );
+        }
+      }
+    }
+  } else {
+    pceType = PIECES.bPawn;
+
+    // Pawn 1-step and 2-step moves
+    for (pceNum = 0; pceNum < GameBoard.pieceNum[pceType]; pceNum++) {
+      sq = GameBoard.pieceList[PIECE_INDEX(pceType, pceNum)];
+
+      // Pawn capture move
+      if (
+        SQ_OFF_BOARD(sq - 9) == BOOL.FALSE &&
+        PieceCol[GameBoard.pieces[sq - 9]] == COLORS.WHITE
+      ) {
+        AddBlackPawnCaptureMove(sq, sq - 9, GameBoard.pieces[sq - 9]);
+      }
+
+      // Pawn capture move
+      if (
+        SQ_OFF_BOARD(sq - 11) == BOOL.FALSE &&
+        PieceCol[GameBoard.pieces[sq - 11]] == COLORS.WHITE
+      ) {
+        AddBlackPawnCaptureMove(sq, sq - 11, GameBoard.pieces[sq - 11]);
+      }
+
+      // En-passant move
+      if (GameBoard.enPassant != SQUARES.NO_SQ) {
+        if (sq - 9 == GameBoard.enPassant) {
+          AddEnPassantMove(
+            MOVE(sq, sq - 9, PIECES.EMPTY, PIECES.EMPTY, MOVE_FLAG_EN_PASSANT)
+          );
+        }
+        if (sq - 11 == GameBoard.enPassant) {
+          AddEnPassantMove(
+            MOVE(sq, sq - 11, PIECES.EMPTY, PIECES.EMPTY, MOVE_FLAG_EN_PASSANT)
+          );
+        }
+      }
+    }
+  }
+
+  pceIndex = LoopNonSlideIndex[GameBoard.side];
+  pce = LoopNonSlidePiece[pceIndex++];
+
+  // For non-sliding pieces
+  while (pce != 0) {
+    for (pceNum = 0; pceNum < GameBoard.pieceNum[pce]; pceNum++) {
+      sq = GameBoard.pieceList[PIECE_INDEX(pce, pceNum)];
+
+      // Loop through all the directions for the piece
+      for (index = 0; index < DirNum[pce]; index++) {
+        dir = PieceDir[pce][index];
+        t_sq = sq + dir;
+
+        if (SQ_OFF_BOARD(t_sq) == BOOL.TRUE) {
+          continue;
+        }
+
+        if (GameBoard.pieces[t_sq] != PIECES.EMPTY) {
+          if (PieceCol[GameBoard.pieces[t_sq]] != GameBoard.side) {
+            AddCaptureMove(
+              MOVE(sq, t_sq, GameBoard.pieces[t_sq], PIECES.EMPTY, 0)
+            );
+          }
+        }
+      }
+    }
+    pce = LoopNonSlidePiece[pceIndex++];
+  }
+
+  pceIndex = LoopSlideIndex[GameBoard.side];
+  pce = LoopSlidePiece[pceIndex++];
+
+  // For sliding pieces
+  while (pce != 0) {
+    for (pceNum = 0; pceNum < GameBoard.pieceNum[pce]; pceNum++) {
+      sq = GameBoard.pieceList[PIECE_INDEX(pce, pceNum)];
+
+      // Loop through all the directions for the piece
+      for (index = 0; index < DirNum[pce]; index++) {
+        dir = PieceDir[pce][index];
+        t_sq = sq + dir;
+
+        // Keep sliding till it hits another pirce or off-board
+        while (SQ_OFF_BOARD(t_sq) == BOOL.FALSE) {
+          if (GameBoard.pieces[t_sq] != PIECES.EMPTY) {
+            if (PieceCol[GameBoard.pieces[t_sq]] != GameBoard.side) {
+              AddCaptureMove(
+                MOVE(sq, t_sq, GameBoard.pieces[t_sq], PIECES.EMPTY, 0)
+              );
+            }
+            break;
+          }
           t_sq += dir;
         }
       }

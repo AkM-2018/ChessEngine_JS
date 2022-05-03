@@ -38,6 +38,14 @@ GameBoard.moveList = new Array(MAX_DEPTH * MAX_POSITION_MOVES);
 GameBoard.moveScores = new Array(MAX_DEPTH * MAX_POSITION_MOVES);
 // index where the moves for certain depth starts
 GameBoard.moveListStart = new Array(MAX_DEPTH);
+// contains poskey and move
+// everytime we improve the alpha cutoff, we store this move in PvTable
+// since this might be the one of the best moves in the position
+GameBoard.PvTable = [];
+// best line for a current position
+GameBoard.PvArray = new Array(MAX_DEPTH);
+GameBoard.searchHistory = new Array(14 * BRD_SQ_NUM);
+GameBoard.searchKillers = new Array(3 * MAX_DEPTH);
 
 // Checks if all the methods are properly working
 function CheckBoard() {

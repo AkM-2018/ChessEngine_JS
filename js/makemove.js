@@ -143,6 +143,7 @@ function MakeMove(move) {
     AddPiece(to, promotedPiece);
   }
 
+  // Change the side to play
   GameBoard.side ^= 1;
   HASH_SIDE();
 
@@ -179,6 +180,7 @@ function TakeMove() {
   if (GameBoard.enPassant != SQUARES.NO_SQ) HASH_ENPASSANT();
   HASH_CASTLING();
 
+  // Change the side to play
   GameBoard.side ^= 1;
   HASH_SIDE();
 
