@@ -15,7 +15,6 @@
   width: 480px;
   height: 480px;
   border-style: solid;
-  border-width: 2px;
 }
 
 #EngineOutput {
@@ -31,15 +30,15 @@
 }
 
 .Dark {
-  background-color: #5fbcd3;
+  background-color: #64a558;
 }
 
 .Light {
-  background-color: #afdde9;
+  background-color: #e9f6d1;
 }
 
 .SqSelected {
-  background-color: #216778;
+  background-color: #baca44;
 }
 
 .rank1 {
