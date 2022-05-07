@@ -20,12 +20,31 @@ function NewGame(fenStr) {
   ParseFen(fenStr);
   PrintBoard();
   setInitialBoardPieces();
+  setInitialBoardPiecesUpd();
   HighlightMove();
   CheckAndSet();
 }
 
+function ClearAllPiecesUpd() {
+  $("img").remove();
+}
+
 function ClearAllPieces() {
   $(".Piece").remove();
+}
+
+function setInitialBoardPiecesUpd() {
+  let sq, sq120, pce;
+
+  ClearAllPiecesUpd();
+
+  for (sq = 0; sq < 64; sq++) {
+    sq120 = SQ120(sq);
+    pce = GameBoard.pieces[sq120];
+    if (pce >= PIECES.wPawn && pce <= PIECES.bKing) {
+      AddGUIPieceUpd(sq120, pce);
+    }
+  }
 }
 
 // Adds pieces to the GameBoard according to GameBoard.pieces
@@ -104,6 +123,21 @@ function HighlightMove() {
   }
 }
 
+function GetClickedSquare(rank, file) {
+  let sq = FileRank2Sq(parseInt(rank[4]), parseInt(file[4]));
+  console.log(sq);
+  return sq;
+}
+
+function UserClick(rank, file) {
+  if (UserMove.from == SQUARES.NO_SQ) {
+    UserMove.from = GetClickedSquare(rank, file);
+  } else {
+    UserMove.to = GetClickedSquare(rank, file);
+  }
+  MakeUserMove();
+}
+
 $(document).on("click", ".Piece", function (e) {
   console.log("PieceClicked");
   if (UserMove.from == SQUARES.NO_SQ) {
@@ -164,6 +198,21 @@ function RemoveGUIPiece(sq) {
       $(this).remove();
     }
   });
+}
+
+function AddGUIPieceUpd(sq, pce) {
+  let file = FilesBrd[sq];
+  let rank = RanksBrd[sq];
+
+  let rankName = "rank" + (rank + 1);
+  let fileName = "file" + (file + 1);
+
+  let pieceFileName =
+    "images/" + SideChar[PieceCol[pce]] + PieceChar[pce].toUpperCase() + ".png";
+
+  let imageString = "<img src='" + pieceFileName + "' />";
+
+  $("." + fileName + "-" + rankName).append(imageString);
 }
 
 function AddGUIPiece(sq, pce) {

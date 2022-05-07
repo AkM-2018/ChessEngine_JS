@@ -93,6 +93,37 @@ function InitBoardVariables() {
   }
 }
 
+function InitBoardSquaresUpd() {
+  let light = 1;
+  let rankName, fileName;
+  let divString, rankIter, fileIter;
+  let lightString;
+
+  for (rankIter = RANKS.RANK_8; rankIter >= RANKS.RANK_1; rankIter--) {
+    light ^= 1;
+    rankName = "rank" + (rankIter + 1);
+    for (fileIter = FILES.FILE_A; fileIter <= FILES.FILE_H; fileIter++) {
+      fileName = "file" + (fileIter + 1);
+      if (light == 0) lightString = "light";
+      else lightString = "dark";
+      light ^= 1;
+      divString =
+        '<div class="board-square ' +
+        fileName +
+        "-" +
+        rankName +
+        " " +
+        lightString +
+        '" onclick=UserClick("' +
+        rankName +
+        '","' +
+        fileName +
+        '") />';
+      $(".board").append(divString);
+    }
+  }
+}
+
 function InitBoardSquares() {
   let light = 1;
   let rankName, fileName;
@@ -129,4 +160,5 @@ function init() {
   InitBoardVariables();
   InitMvvLva();
   InitBoardSquares();
+  InitBoardSquaresUpd();
 }

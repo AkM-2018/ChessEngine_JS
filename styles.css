@@ -1,3 +1,101 @@
+.header-container {
+  margin : 2rem
+}
+
+.row {
+  margin-block: 4rem;
+}
+
+.game-pieces {
+  border: 5px dotted black;
+}
+
+.stats {
+  border: 5px dotted black;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  padding-block: 1rem;
+  padding-inline: 1.5rem;
+}
+
+.board {
+  width: 480px;
+  height: 480px;
+  margin-inline : 1rem;
+  padding: 0;
+}
+
+.board-square {
+  float: left;
+  width: 60px;
+  height: 60px;
+}
+
+.button-container {
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.light {
+  background-color: #BEC2D4;
+}
+
+.dark {
+  background-color: #929DB0;
+}
+
+.piece {
+  padding: 0;
+}
+
+.stats-buttons {
+  background-color: #FFFFFF;
+  border: 1px solid rgb(209,213,219);
+  border-radius: .5rem;
+  box-sizing: border-box;
+  color: #111827;
+  font-family: "Inter var",ui-sans-serif,system-ui,-apple-system,system-ui,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
+  font-size: .775rem;
+  font-weight: 600;
+  line-height: 1.25rem;
+  padding: .75rem 0.75rem;
+  text-align: center;
+  text-decoration: none #D1D5DB solid;
+  text-decoration-thickness: auto;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+
+.stats-buttons:hover {
+  background-color: rgb(249,250,251);
+}
+
+.stats-buttons:focus {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+}
+
+.stats-buttons:focus-visible {
+  box-shadow: none;
+}
+
+/* body {
+  height: 80vh;
+  width: 80vw;
+  margin : 1rem;
+  color: #9CD4FF;
+  background-color: #2D2B28;
+}
+
+#container {
+  width: 80vw;
+  height: 80vh;
+}
+
 #FenInDiv {
   position: relative;
   left: 60px;
@@ -15,6 +113,9 @@
   width: 480px;
   height: 480px;
   border-style: solid;
+  border-width: 20px;
+  border-color: #393434;
+  box-sizing: content-box;
 }
 
 #EngineOutput {
@@ -30,15 +131,15 @@
 }
 
 .Dark {
-  background-color: #64a558;
+  background-color: #929DB0;
 }
 
 .Light {
-  background-color: #e9f6d1;
+  background-color: #BEC2D4;
 }
 
 .SqSelected {
-  background-color: #baca44;
+  background-color: #5074B3;
 }
 
 .rank1 {
@@ -93,4 +194,4 @@
 
 .Piece {
   position: absolute;
-}
+} */
