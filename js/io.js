@@ -57,6 +57,7 @@ function PrintMoveList() {
   }
 }
 
+// Given from and to, returns if a valid move is present
 function ParseMove(from, to) {
   GenerateMoves();
 

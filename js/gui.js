@@ -8,6 +8,7 @@ $("#TakeButton").click(function () {
     TakeMove();
     GameBoard.ply = 0;
     setInitialBoardPieces();
+    HighlightMove();
   }
 });
 
@@ -19,6 +20,7 @@ function NewGame(fenStr) {
   ParseFen(fenStr);
   PrintBoard();
   setInitialBoardPieces();
+  HighlightMove();
   CheckAndSet();
 }
 
@@ -26,6 +28,7 @@ function ClearAllPieces() {
   $(".Piece").remove();
 }
 
+// Adds pieces to the GameBoard according to GameBoard.pieces
 function setInitialBoardPieces() {
   let sq, sq120, pce;
 
@@ -62,6 +65,8 @@ function SetSquareSelected(sq) {
   });
 }
 
+// Returns the selected square
+// Also selects the square
 function ClickedSquare(pageX, pageY) {
   let positionBoard = $("#Board").position();
 
@@ -80,6 +85,23 @@ function ClickedSquare(pageX, pageY) {
   SetSquareSelected(sq);
 
   return sq;
+}
+
+function HighlightMove() {
+  let index = 0;
+  // reset previous highlight
+  for (index = 0; index < 64; index++) {
+    DeselectSquare(SQ120(index));
+  }
+
+  // insert new highlight
+  if (GameBoard.historyPly >= 1) {
+    previous_move = GameBoard.history[GameBoard.historyPly - 1];
+    from_sq = FROM_SQ(previous_move.move);
+    to_sq = TO_SQ(previous_move.move);
+    SetSquareSelected(from_sq);
+    SetSquareSelected(to_sq);
+  }
 }
 
 $(document).on("click", ".Piece", function (e) {
@@ -116,6 +138,7 @@ function MakeUserMove() {
 
     DeselectSquare(UserMove.from);
     DeselectSquare(UserMove.to);
+    HighlightMove();
 
     UserMove.from = SQUARES.NO_SQ;
     UserMove.to = SQUARES.NO_SQ;
@@ -276,6 +299,7 @@ function ThreeFoldRepetition() {
   return r;
 }
 
+// Checks if the game is over in any possible way
 function CheckResult() {
   if (GameBoard.fiftyMoveCnt >= 100) {
     $("#GameStatus").text("Game Drawn {fifty move rule}");
@@ -331,6 +355,7 @@ function CheckResult() {
   }
 }
 
+// Sets gamestatus according to CheckResult()
 function CheckAndSet() {
   if (CheckResult() == BOOL.TRUE) {
     GameController.gameOver = BOOL.TRUE;
@@ -365,5 +390,6 @@ function StartSearch() {
 
   MakeMove(SearchController.best);
   MoveGUIPiece(SearchController.best);
+  HighlightMove();
   CheckAndSet();
 }
