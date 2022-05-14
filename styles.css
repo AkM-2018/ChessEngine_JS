@@ -1,22 +1,30 @@
+body {
+  background-color: #3e4756;
+}
+
 .header-container {
-  margin : 2rem
+  margin-top : 2rem;
+  margin-inline : 2rem;
+  color : white;
 }
 
 .row {
-  margin-block: 4rem;
+  margin-block: 2rem;
 }
 
 .game-pieces {
   border: 5px dotted black;
 }
 
-.stats {
-  border: 5px dotted black;
+.right-stats {
+  border-radius: 7px;
   display: flex;
   flex-direction: column;
   justify-content: space-evenly;
   padding-block: 1rem;
   padding-inline: 1.5rem;
+  background-color: #929db0;
+  color : white;
 }
 
 .board {
@@ -43,6 +51,10 @@
 
 .dark {
   background-color: #929DB0;
+}
+
+.selected-square {
+  background-color: #558EA9;
 }
 
 .piece {
@@ -81,6 +93,40 @@
 
 .stats-buttons:focus-visible {
   box-shadow: none;
+}
+
+.left-stats {
+  border-radius: 7px;
+  background-color: #929db0;
+  color : white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.black-killed-pieces {
+  height: 10%;
+}
+
+.white-killed-pieces {
+  height: 10%;
+}
+
+.moves-storage {
+  height: 75%;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.move-list {
+  background-color: #BEC2D4;
+  border-radius: 5px;
+  width: 75%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 /* body {

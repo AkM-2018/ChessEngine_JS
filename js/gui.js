@@ -7,7 +7,7 @@ $("#TakeButton").click(function () {
   if (GameBoard.historyPly > 0) {
     TakeMove();
     GameBoard.ply = 0;
-    setInitialBoardPieces();
+    setInitialBoardPiecesUpd();
     HighlightMove();
   }
 });
@@ -19,7 +19,7 @@ $("#NewGameButton").click(function () {
 function NewGame(fenStr) {
   ParseFen(fenStr);
   PrintBoard();
-  setInitialBoardPieces();
+  //setInitialBoardPieces();
   setInitialBoardPiecesUpd();
   HighlightMove();
   CheckAndSet();
@@ -29,9 +29,9 @@ function ClearAllPiecesUpd() {
   $("img").remove();
 }
 
-function ClearAllPieces() {
-  $(".Piece").remove();
-}
+// function ClearAllPieces() {
+//   $(".Piece").remove();
+// }
 
 function setInitialBoardPiecesUpd() {
   let sq, sq120, pce;
@@ -48,69 +48,87 @@ function setInitialBoardPiecesUpd() {
 }
 
 // Adds pieces to the GameBoard according to GameBoard.pieces
-function setInitialBoardPieces() {
-  let sq, sq120, pce;
+// function setInitialBoardPieces() {
+//   let sq, sq120, pce;
 
-  ClearAllPieces();
+//   ClearAllPieces();
 
-  for (sq = 0; sq < 64; sq++) {
-    sq120 = SQ120(sq);
-    pce = GameBoard.pieces[sq120];
-    if (pce >= PIECES.wPawn && pce <= PIECES.bKing) {
-      AddGUIPiece(sq120, pce);
-    }
-  }
+//   for (sq = 0; sq < 64; sq++) {
+//     sq120 = SQ120(sq);
+//     pce = GameBoard.pieces[sq120];
+//     if (pce >= PIECES.wPawn && pce <= PIECES.bKing) {
+//       AddGUIPiece(sq120, pce);
+//     }
+//   }
+// }
+
+// function DeselectSquare(sq) {
+//   $(".Square").each(function (index) {
+//     if (
+//       PieceOnSquare(sq, $(this).position().top, $(this).position().left) ==
+//       BOOL.TRUE
+//     ) {
+//       $(this).removeClass("SqSelected");
+//     }
+//   });
+// }
+
+// function SetSquareSelected(sq) {
+//   $(".Square").each(function (index) {
+//     if (
+//       PieceOnSquare(sq, $(this).position().top, $(this).position().left) ==
+//       BOOL.TRUE
+//     ) {
+//       $(this).addClass("SqSelected");
+//     }
+//   });
+// }
+
+function DeselectSquareUpd(sq) {
+  let file = FilesBrd[sq];
+  let rank = RanksBrd[sq];
+  let rankName = "rank" + (rank + 1);
+  let fileName = "file" + (file + 1);
+
+  $("." + fileName + "-" + rankName).removeClass("selected-square");
 }
 
-function DeselectSquare(sq) {
-  $(".Square").each(function (index) {
-    if (
-      PieceOnSquare(sq, $(this).position().top, $(this).position().left) ==
-      BOOL.TRUE
-    ) {
-      $(this).removeClass("SqSelected");
-    }
-  });
-}
+function SetSquareSelectedUpd(sq) {
+  let file = FilesBrd[sq];
+  let rank = RanksBrd[sq];
+  let rankName = "rank" + (rank + 1);
+  let fileName = "file" + (file + 1);
 
-function SetSquareSelected(sq) {
-  $(".Square").each(function (index) {
-    if (
-      PieceOnSquare(sq, $(this).position().top, $(this).position().left) ==
-      BOOL.TRUE
-    ) {
-      $(this).addClass("SqSelected");
-    }
-  });
+  $("." + fileName + "-" + rankName).addClass("selected-square");
 }
 
 // Returns the selected square
 // Also selects the square
-function ClickedSquare(pageX, pageY) {
-  let positionBoard = $("#Board").position();
+// function ClickedSquare(pageX, pageY) {
+//   let positionBoard = $("#Board").position();
 
-  let workedX = Math.floor(positionBoard.left);
-  let workedY = Math.floor(positionBoard.top);
+//   let workedX = Math.floor(positionBoard.left);
+//   let workedY = Math.floor(positionBoard.top);
 
-  pageX = Math.floor(pageX);
-  pageY = Math.floor(pageY);
+//   pageX = Math.floor(pageX);
+//   pageY = Math.floor(pageY);
 
-  let file = Math.floor((pageX - workedX) / 60);
-  let rank = 7 - Math.floor((pageY - workedY) / 60);
+//   let file = Math.floor((pageX - workedX) / 60);
+//   let rank = 7 - Math.floor((pageY - workedY) / 60);
 
-  let sq = FileRank2Sq(file, rank);
-  console.log("Clicked square: " + PrintSq(sq));
+//   let sq = FileRank2Sq(file, rank);
+//   console.log("Clicked square: " + PrintSq(sq));
 
-  SetSquareSelected(sq);
+//   SetSquareSelected(sq);
 
-  return sq;
-}
+//   return sq;
+// }
 
 function HighlightMove() {
   let index = 0;
   // reset previous highlight
   for (index = 0; index < 64; index++) {
-    DeselectSquare(SQ120(index));
+    DeselectSquareUpd(SQ120(index));
   }
 
   // insert new highlight
@@ -118,14 +136,16 @@ function HighlightMove() {
     previous_move = GameBoard.history[GameBoard.historyPly - 1];
     from_sq = FROM_SQ(previous_move.move);
     to_sq = TO_SQ(previous_move.move);
-    SetSquareSelected(from_sq);
-    SetSquareSelected(to_sq);
+    SetSquareSelectedUpd(from_sq);
+    SetSquareSelectedUpd(to_sq);
   }
 }
 
+function AddToMovelist() {}
+
 function GetClickedSquare(rank, file) {
-  let sq = FileRank2Sq(parseInt(rank[4]), parseInt(file[4]));
-  console.log(sq);
+  let sq = FileRank2Sq(parseInt(file[4]) - 1, parseInt(rank[4]) - 1);
+  SetSquareSelectedUpd(sq);
   return sq;
 }
 
@@ -138,23 +158,23 @@ function UserClick(rank, file) {
   MakeUserMove();
 }
 
-$(document).on("click", ".Piece", function (e) {
-  console.log("PieceClicked");
-  if (UserMove.from == SQUARES.NO_SQ) {
-    UserMove.from = ClickedSquare(e.pageX, e.pageY);
-  } else {
-    UserMove.to = ClickedSquare(e.pageX, e.pageY);
-  }
-  MakeUserMove();
-});
+// $(document).on("click", ".Piece", function (e) {
+//   console.log("PieceClicked");
+//   if (UserMove.from == SQUARES.NO_SQ) {
+//     UserMove.from = ClickedSquare(e.pageX, e.pageY);
+//   } else {
+//     UserMove.to = ClickedSquare(e.pageX, e.pageY);
+//   }
+//   MakeUserMove();
+// });
 
-$(document).on("click", ".Square", function (e) {
-  console.log("SquareClicked");
-  if (UserMove.from != SQUARES.NO_SQ) {
-    UserMove.to = ClickedSquare(e.pageX, e.pageY);
-    MakeUserMove();
-  }
-});
+// $(document).on("click", ".Square", function (e) {
+//   console.log("SquareClicked");
+//   if (UserMove.from != SQUARES.NO_SQ) {
+//     UserMove.to = ClickedSquare(e.pageX, e.pageY);
+//     MakeUserMove();
+//   }
+// });
 
 function MakeUserMove() {
   if (UserMove.from != SQUARES.NO_SQ && UserMove.to != SQUARES.NO_SQ) {
@@ -165,13 +185,13 @@ function MakeUserMove() {
     if (parsed != NO_MOVE) {
       MakeMove(parsed);
       PrintBoard();
-      MoveGUIPiece(parsed);
+      MoveGUIPieceUpd(parsed);
       CheckAndSet();
       PreSearch();
     }
 
-    DeselectSquare(UserMove.from);
-    DeselectSquare(UserMove.to);
+    DeselectSquareUpd(UserMove.from);
+    DeselectSquareUpd(UserMove.to);
     HighlightMove();
 
     UserMove.from = SQUARES.NO_SQ;
@@ -179,25 +199,34 @@ function MakeUserMove() {
   }
 }
 
-function PieceOnSquare(sq, top, left) {
-  if (
-    RanksBrd[sq] == 7 - Math.round(top / 60) &&
-    FilesBrd[sq] == Math.round(left / 60)
-  ) {
-    return BOOL.TRUE;
-  }
-  return BOOL.FALSE;
-}
+// function PieceOnSquare(sq, top, left) {
+//   if (
+//     RanksBrd[sq] == 7 - Math.round(top / 60) &&
+//     FilesBrd[sq] == Math.round(left / 60)
+//   ) {
+//     return BOOL.TRUE;
+//   }
+//   return BOOL.FALSE;
+// }
 
-function RemoveGUIPiece(sq) {
-  $(".Piece").each(function (index) {
-    if (
-      PieceOnSquare(sq, $(this).position().top, $(this).position().left) ==
-      BOOL.TRUE
-    ) {
-      $(this).remove();
-    }
-  });
+// function RemoveGUIPiece(sq) {
+//   $(".Piece").each(function (index) {
+//     if (
+//       PieceOnSquare(sq, $(this).position().top, $(this).position().left) ==
+//       BOOL.TRUE
+//     ) {
+//       $(this).remove();
+//     }
+//   });
+// }
+
+function RemoveGUIPieceUpd(sq) {
+  let file = FilesBrd[sq];
+  let rank = RanksBrd[sq];
+  let rankName = "rank" + (rank + 1);
+  let fileName = "file" + (file + 1);
+
+  $("." + fileName + "-" + rankName).empty();
 }
 
 function AddGUIPieceUpd(sq, pce) {
@@ -215,29 +244,29 @@ function AddGUIPieceUpd(sq, pce) {
   $("." + fileName + "-" + rankName).append(imageString);
 }
 
-function AddGUIPiece(sq, pce) {
-  let file = FilesBrd[sq];
-  let rank = RanksBrd[sq];
+// function AddGUIPiece(sq, pce) {
+//   let file = FilesBrd[sq];
+//   let rank = RanksBrd[sq];
 
-  let rankName = "rank" + (rank + 1);
-  let fileName = "file" + (file + 1);
+//   let rankName = "rank" + (rank + 1);
+//   let fileName = "file" + (file + 1);
 
-  let pieceFileName =
-    "images/" + SideChar[PieceCol[pce]] + PieceChar[pce].toUpperCase() + ".png";
+//   let pieceFileName =
+//     "images/" + SideChar[PieceCol[pce]] + PieceChar[pce].toUpperCase() + ".png";
 
-  let imageString =
-    "<image src='" +
-    pieceFileName +
-    "' class='Piece " +
-    rankName +
-    " " +
-    fileName +
-    "'/>";
+//   let imageString =
+//     "<image src='" +
+//     pieceFileName +
+//     "' class='Piece " +
+//     rankName +
+//     " " +
+//     fileName +
+//     "'/>";
 
-  $("#Board").append(imageString);
-}
+//   $("#Board").append(imageString);
+// }
 
-function MoveGUIPiece(move) {
+function MoveGUIPieceUpd(move) {
   let from = FROM_SQ(move);
   let to = TO_SQ(move);
 
@@ -248,50 +277,109 @@ function MoveGUIPiece(move) {
     } else {
       epRemove = to + 10;
     }
-    RemoveGUIPiece(epRemove);
+    RemoveGUIPieceUpd(epRemove);
   } else if (CAPTURED(move)) {
-    RemoveGUIPiece(to);
+    RemoveGUIPieceUpd(to);
   }
 
-  let file = FilesBrd[to];
-  let rank = RanksBrd[to];
+  let file = FilesBrd[from];
+  let rank = RanksBrd[from];
   let rankName = "rank" + (rank + 1);
   let fileName = "file" + (file + 1);
 
-  $(".Piece").each(function (index) {
-    if (
-      PieceOnSquare(from, $(this).position().top, $(this).position().left) ==
-      BOOL.TRUE
-    ) {
-      $(this).removeClass();
-      $(this).addClass("Piece " + rankName + " " + fileName);
-    }
-  });
+  let imageString = $("." + fileName + "-" + rankName)[0].innerHTML;
+  $("." + fileName + "-" + rankName)
+    .children()
+    .remove();
+
+  file = FilesBrd[to];
+  rank = RanksBrd[to];
+  rankName = "rank" + (rank + 1);
+  fileName = "file" + (file + 1);
+
+  $("." + fileName + "-" + rankName).append(imageString);
 
   if (move & MOVE_FLAG_CASTLING) {
     switch (to) {
       case SQUARES.G1:
-        RemoveGUIPiece(SQUARES.H1);
-        AddGUIPiece(SQUARES.F1, PIECES.wRook);
+        RemoveGUIPieceUpd(SQUARES.H1);
+        AddGUIPieceUpd(SQUARES.F1, PIECES.wRook);
         break;
       case SQUARES.C1:
-        RemoveGUIPiece(SQUARES.A1);
-        AddGUIPiece(SQUARES.D1, PIECES.wRook);
+        RemoveGUIPieceUpd(SQUARES.A1);
+        AddGUIPieceUpd(SQUARES.D1, PIECES.wRook);
         break;
       case SQUARES.G8:
-        RemoveGUIPiece(SQUARES.H8);
-        AddGUIPiece(SQUARES.F8, PIECES.bRook);
+        RemoveGUIPieceUpd(SQUARES.H8);
+        AddGUIPieceUpd(SQUARES.F8, PIECES.bRook);
         break;
       case SQUARES.C8:
-        RemoveGUIPiece(SQUARES.A8);
-        AddGUIPiece(SQUARES.D8, PIECES.bRook);
+        s;
+        RemoveGUIPieceUpd(SQUARES.A8);
+        AddGUIPieceUpd(SQUARES.D8, PIECES.bRook);
         break;
     }
   } else if (PROMOTED(move)) {
-    RemoveGUIPiece(to);
-    AddGUIPiece(to, PROMOTED(move));
+    RemoveGUIPieceUpd(to);
+    AddGUIPieceUpd(to, PROMOTED(move));
   }
 }
+
+// function MoveGUIPiece(move) {
+//   let from = FROM_SQ(move);
+//   let to = TO_SQ(move);
+
+//   if (move & MOVE_FLAG_EN_PASSANT) {
+//     let epRemove;
+//     if (GameBoard.side == COLORS.BLACK) {
+//       epRemove = to - 10;
+//     } else {
+//       epRemove = to + 10;
+//     }
+//     RemoveGUIPiece(epRemove);
+//   } else if (CAPTURED(move)) {
+//     RemoveGUIPiece(to);
+//   }
+
+//   let file = FilesBrd[to];
+//   let rank = RanksBrd[to];
+//   let rankName = "rank" + (rank + 1);
+//   let fileName = "file" + (file + 1);
+
+//   $(".Piece").each(function (index) {
+//     if (
+//       PieceOnSquare(from, $(this).position().top, $(this).position().left) ==
+//       BOOL.TRUE
+//     ) {
+//       $(this).removeClass();
+//       $(this).addClass("Piece " + rankName + " " + fileName);
+//     }
+//   });
+
+//   if (move & MOVE_FLAG_CASTLING) {
+//     switch (to) {
+//       case SQUARES.G1:
+//         RemoveGUIPiece(SQUARES.H1);
+//         AddGUIPiece(SQUARES.F1, PIECES.wRook);
+//         break;
+//       case SQUARES.C1:
+//         RemoveGUIPiece(SQUARES.A1);
+//         AddGUIPiece(SQUARES.D1, PIECES.wRook);
+//         break;
+//       case SQUARES.G8:
+//         RemoveGUIPiece(SQUARES.H8);
+//         AddGUIPiece(SQUARES.F8, PIECES.bRook);
+//         break;
+//       case SQUARES.C8:
+//         RemoveGUIPiece(SQUARES.A8);
+//         AddGUIPiece(SQUARES.D8, PIECES.bRook);
+//         break;
+//     }
+//   } else if (PROMOTED(move)) {
+//     RemoveGUIPiece(to);
+//     AddGUIPiece(to, PROMOTED(move));
+//   }
+// }
 
 function DrawMaterial() {
   if (
@@ -351,17 +439,17 @@ function ThreeFoldRepetition() {
 // Checks if the game is over in any possible way
 function CheckResult() {
   if (GameBoard.fiftyMoveCnt >= 100) {
-    $("#GameStatus").text("Game Drawn {fifty move rule}");
+    $("#GameStatus").text("Game Drawn - Fifty move rule");
     return BOOL.TRUE;
   }
 
   if (ThreeFoldRepetition() >= 2) {
-    $("#GameStatus").text("Game Drawn {3-fold repetition}");
+    $("#GameStatus").text("Game Drawn - 3-fold repetition");
     return BOOL.TRUE;
   }
 
   if (DrawMaterial() == BOOL.TRUE) {
-    $("#GameStatus").text("Game Drawn {insufficient material}");
+    $("#GameStatus").text("Game Drawn -Insufficient material");
     return BOOL.TRUE;
   }
 
@@ -392,10 +480,10 @@ function CheckResult() {
 
   if (inCheck == BOOL.TRUE) {
     if (GameBoard.side == COLORS.WHITE) {
-      $("#GameStatus").text("CheckMate {black wins}");
+      $("#GameStatus").text("CheckMate - Black wins");
       return BOOL.TRUE;
     } else {
-      $("#GameStatus").text("CheckMate {white wins}");
+      $("#GameStatus").text("CheckMate - White wins");
       return BOOL.TRUE;
     }
   } else {
@@ -431,14 +519,14 @@ $("#SearchButton").click(function () {
 function StartSearch() {
   SearchController.depth = MAX_DEPTH;
   let t = $.now();
-  let thinkingTime = $("#ThinkTimeChoice").val();
+  let thinkingTime = $("#think-time-choice").val();
 
   SearchController.time = parseInt(thinkingTime) * 1000;
   SearchController.start = t;
   SearchPosition();
 
   MakeMove(SearchController.best);
-  MoveGUIPiece(SearchController.best);
+  MoveGUIPieceUpd(SearchController.best);
   HighlightMove();
   CheckAndSet();
 }
