@@ -1,96 +1,142 @@
-#FenInDiv {
-  position: relative;
-  left: 60px;
+body {
+  background-color: #3e4756;
 }
 
-#fenIn {
-  width: 480px;
-  left: 60px;
+.header-container {
+  margin-top : 2rem;
+  margin-inline : 2rem;
+  color : white;
 }
 
-#Board {
-  position: relative;
-  top: 20px;
-  left: 60px;
+.row {
+  margin-block: 2rem;
+}
+
+.game-pieces {
+  border: 5px dotted black;
+}
+
+.right-stats {
+  border-radius: 7px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  padding-block: 1rem;
+  padding-inline: 1.5rem;
+  background-color: #929db0;
+  color : white;
+}
+
+.board {
   width: 480px;
   height: 480px;
-  border-style: solid;
+  margin-inline : 1rem;
+  padding: 0;
 }
 
-#EngineOutput {
-  position: absolute;
-  left: 600px;
-  top: 250px;
-}
-
-.Square {
-  position: absolute;
+.board-square {
+  float: left;
   width: 60px;
   height: 60px;
 }
 
-.Dark {
-  background-color: #64a558;
+.button-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  flex-grow: 1;
+  padding-inline: 2rem;
 }
 
-.Light {
-  background-color: #e9f6d1;
+.light {
+  background-color: #BEC2D4;
 }
 
-.SqSelected {
-  background-color: #baca44;
+.dark {
+  background-color: #929DB0;
 }
 
-.rank1 {
-  top: 420px;
-}
-.rank2 {
-  top: 360px;
-}
-.rank3 {
-  top: 300px;
-}
-.rank4 {
-  top: 240px;
-}
-.rank5 {
-  top: 180px;
-}
-.rank6 {
-  top: 120px;
-}
-.rank7 {
-  top: 60px;
-}
-.rank8 {
-  top: 0px;
+.selected-square {
+  background-color: #558EA9;
 }
 
-.file1 {
-  left: 0px;
-}
-.file2 {
-  left: 60px;
-}
-.file3 {
-  left: 120px;
-}
-.file4 {
-  left: 180px;
-}
-.file5 {
-  left: 240px;
-}
-.file6 {
-  left: 300px;
-}
-.file7 {
-  left: 360px;
-}
-.file8 {
-  left: 420px;
+.piece {
+  padding: 0;
 }
 
-.Piece {
-  position: absolute;
+.stats-buttons {
+  background-color: #eceaea;
+  border: 1px solid rgb(209,213,219);
+  border-radius: .5rem;
+  box-sizing: border-box;
+  color: #111827;
+  font-family: "Inter var",ui-sans-serif,system-ui,-apple-system,system-ui,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
+  font-size: .775rem;
+  font-weight: 600;
+  line-height: 1.25rem;
+  padding: .75rem 0.75rem;
+  text-align: center;
+  text-decoration: none #D1D5DB solid;
+  text-decoration-thickness: auto;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  margin-block: 0.25rem;
+}
+
+.buttons-heading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-block: 2rem;
+  color: #454343;
+}
+
+.stats-buttons:hover {
+  background-color: rgb(249,250,251);
+}
+
+.stats-buttons:focus {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+}
+
+.stats-buttons:focus-visible {
+  box-shadow: none;
+}
+
+.left-stats {
+  border-radius: 7px;
+  background-color: #929db0;
+  color : white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.black-killed-pieces {
+  height: 10%;
+}
+
+.white-killed-pieces {
+  height: 10%;
+}
+
+.moves-storage {
+  height: 75%;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.move-list {
+  background-color: #BEC2D4;
+  border-radius: 5px;
+  width: 75%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
