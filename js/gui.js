@@ -19,7 +19,6 @@ $("#NewGameButton").click(function () {
 function NewGame(fenStr) {
   ParseFen(fenStr);
   PrintBoard();
-  //setInitialBoardPieces();
   setInitialBoardPiecesUpd();
   HighlightMove();
   CheckAndSet();
@@ -28,10 +27,6 @@ function NewGame(fenStr) {
 function ClearAllPiecesUpd() {
   $("img").remove();
 }
-
-// function ClearAllPieces() {
-//   $(".Piece").remove();
-// }
 
 function setInitialBoardPiecesUpd() {
   let sq, sq120, pce;
@@ -46,43 +41,6 @@ function setInitialBoardPiecesUpd() {
     }
   }
 }
-
-// Adds pieces to the GameBoard according to GameBoard.pieces
-// function setInitialBoardPieces() {
-//   let sq, sq120, pce;
-
-//   ClearAllPieces();
-
-//   for (sq = 0; sq < 64; sq++) {
-//     sq120 = SQ120(sq);
-//     pce = GameBoard.pieces[sq120];
-//     if (pce >= PIECES.wPawn && pce <= PIECES.bKing) {
-//       AddGUIPiece(sq120, pce);
-//     }
-//   }
-// }
-
-// function DeselectSquare(sq) {
-//   $(".Square").each(function (index) {
-//     if (
-//       PieceOnSquare(sq, $(this).position().top, $(this).position().left) ==
-//       BOOL.TRUE
-//     ) {
-//       $(this).removeClass("SqSelected");
-//     }
-//   });
-// }
-
-// function SetSquareSelected(sq) {
-//   $(".Square").each(function (index) {
-//     if (
-//       PieceOnSquare(sq, $(this).position().top, $(this).position().left) ==
-//       BOOL.TRUE
-//     ) {
-//       $(this).addClass("SqSelected");
-//     }
-//   });
-// }
 
 function DeselectSquareUpd(sq) {
   let file = FilesBrd[sq];
@@ -102,28 +60,6 @@ function SetSquareSelectedUpd(sq) {
   $("." + fileName + "-" + rankName).addClass("selected-square");
 }
 
-// Returns the selected square
-// Also selects the square
-// function ClickedSquare(pageX, pageY) {
-//   let positionBoard = $("#Board").position();
-
-//   let workedX = Math.floor(positionBoard.left);
-//   let workedY = Math.floor(positionBoard.top);
-
-//   pageX = Math.floor(pageX);
-//   pageY = Math.floor(pageY);
-
-//   let file = Math.floor((pageX - workedX) / 60);
-//   let rank = 7 - Math.floor((pageY - workedY) / 60);
-
-//   let sq = FileRank2Sq(file, rank);
-//   console.log("Clicked square: " + PrintSq(sq));
-
-//   SetSquareSelected(sq);
-
-//   return sq;
-// }
-
 function HighlightMove() {
   let index = 0;
   // reset previous highlight
@@ -141,8 +77,6 @@ function HighlightMove() {
   }
 }
 
-function AddToMovelist() {}
-
 function GetClickedSquare(rank, file) {
   let sq = FileRank2Sq(parseInt(file[4]) - 1, parseInt(rank[4]) - 1);
   SetSquareSelectedUpd(sq);
@@ -158,23 +92,13 @@ function UserClick(rank, file) {
   MakeUserMove();
 }
 
-// $(document).on("click", ".Piece", function (e) {
-//   console.log("PieceClicked");
-//   if (UserMove.from == SQUARES.NO_SQ) {
-//     UserMove.from = ClickedSquare(e.pageX, e.pageY);
-//   } else {
-//     UserMove.to = ClickedSquare(e.pageX, e.pageY);
-//   }
-//   MakeUserMove();
-// });
-
-// $(document).on("click", ".Square", function (e) {
-//   console.log("SquareClicked");
-//   if (UserMove.from != SQUARES.NO_SQ) {
-//     UserMove.to = ClickedSquare(e.pageX, e.pageY);
-//     MakeUserMove();
-//   }
-// });
+function AddToMoveList() {
+  if (GameBoard.historyPly >= 1) {
+    console.log("Add To Move List");
+    previous_move = GameBoard.history[GameBoard.historyPly - 1].move;
+    console.log(PrintMove(previous_move));
+  }
+}
 
 function MakeUserMove() {
   if (UserMove.from != SQUARES.NO_SQ && UserMove.to != SQUARES.NO_SQ) {
@@ -186,6 +110,7 @@ function MakeUserMove() {
       MakeMove(parsed);
       PrintBoard();
       MoveGUIPieceUpd(parsed);
+      AddToMoveList();
       CheckAndSet();
       PreSearch();
     }
@@ -198,27 +123,6 @@ function MakeUserMove() {
     UserMove.to = SQUARES.NO_SQ;
   }
 }
-
-// function PieceOnSquare(sq, top, left) {
-//   if (
-//     RanksBrd[sq] == 7 - Math.round(top / 60) &&
-//     FilesBrd[sq] == Math.round(left / 60)
-//   ) {
-//     return BOOL.TRUE;
-//   }
-//   return BOOL.FALSE;
-// }
-
-// function RemoveGUIPiece(sq) {
-//   $(".Piece").each(function (index) {
-//     if (
-//       PieceOnSquare(sq, $(this).position().top, $(this).position().left) ==
-//       BOOL.TRUE
-//     ) {
-//       $(this).remove();
-//     }
-//   });
-// }
 
 function RemoveGUIPieceUpd(sq) {
   let file = FilesBrd[sq];
@@ -243,28 +147,6 @@ function AddGUIPieceUpd(sq, pce) {
 
   $("." + fileName + "-" + rankName).append(imageString);
 }
-
-// function AddGUIPiece(sq, pce) {
-//   let file = FilesBrd[sq];
-//   let rank = RanksBrd[sq];
-
-//   let rankName = "rank" + (rank + 1);
-//   let fileName = "file" + (file + 1);
-
-//   let pieceFileName =
-//     "images/" + SideChar[PieceCol[pce]] + PieceChar[pce].toUpperCase() + ".png";
-
-//   let imageString =
-//     "<image src='" +
-//     pieceFileName +
-//     "' class='Piece " +
-//     rankName +
-//     " " +
-//     fileName +
-//     "'/>";
-
-//   $("#Board").append(imageString);
-// }
 
 function MoveGUIPieceUpd(move) {
   let from = FROM_SQ(move);
@@ -324,62 +206,6 @@ function MoveGUIPieceUpd(move) {
     AddGUIPieceUpd(to, PROMOTED(move));
   }
 }
-
-// function MoveGUIPiece(move) {
-//   let from = FROM_SQ(move);
-//   let to = TO_SQ(move);
-
-//   if (move & MOVE_FLAG_EN_PASSANT) {
-//     let epRemove;
-//     if (GameBoard.side == COLORS.BLACK) {
-//       epRemove = to - 10;
-//     } else {
-//       epRemove = to + 10;
-//     }
-//     RemoveGUIPiece(epRemove);
-//   } else if (CAPTURED(move)) {
-//     RemoveGUIPiece(to);
-//   }
-
-//   let file = FilesBrd[to];
-//   let rank = RanksBrd[to];
-//   let rankName = "rank" + (rank + 1);
-//   let fileName = "file" + (file + 1);
-
-//   $(".Piece").each(function (index) {
-//     if (
-//       PieceOnSquare(from, $(this).position().top, $(this).position().left) ==
-//       BOOL.TRUE
-//     ) {
-//       $(this).removeClass();
-//       $(this).addClass("Piece " + rankName + " " + fileName);
-//     }
-//   });
-
-//   if (move & MOVE_FLAG_CASTLING) {
-//     switch (to) {
-//       case SQUARES.G1:
-//         RemoveGUIPiece(SQUARES.H1);
-//         AddGUIPiece(SQUARES.F1, PIECES.wRook);
-//         break;
-//       case SQUARES.C1:
-//         RemoveGUIPiece(SQUARES.A1);
-//         AddGUIPiece(SQUARES.D1, PIECES.wRook);
-//         break;
-//       case SQUARES.G8:
-//         RemoveGUIPiece(SQUARES.H8);
-//         AddGUIPiece(SQUARES.F8, PIECES.bRook);
-//         break;
-//       case SQUARES.C8:
-//         RemoveGUIPiece(SQUARES.A8);
-//         AddGUIPiece(SQUARES.D8, PIECES.bRook);
-//         break;
-//     }
-//   } else if (PROMOTED(move)) {
-//     RemoveGUIPiece(to);
-//     AddGUIPiece(to, PROMOTED(move));
-//   }
-// }
 
 function DrawMaterial() {
   if (

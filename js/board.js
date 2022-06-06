@@ -46,6 +46,7 @@ GameBoard.PvTable = [];
 GameBoard.PvArray = new Array(MAX_DEPTH);
 GameBoard.searchHistory = new Array(14 * BRD_SQ_NUM);
 GameBoard.searchKillers = new Array(3 * MAX_DEPTH);
+GameBoard.pieceMoved = [];
 
 // Checks if all the methods are properly working
 function CheckBoard() {

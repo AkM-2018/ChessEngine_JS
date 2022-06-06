@@ -19,19 +19,17 @@
             <div class="container">
                 <div class="row">
                     <div class="left-stats col">
-                        <div class="black-killed-pieces">
-                            
-                        </div>
                         <div class="moves-storage">
-                            <div class="stats-heading text-center">
-                                <h4>Move List:</h4>
-                            </div>
                             <div class="move-list">
-
+                                <div class="buttons-heading">
+                                    <h4>Game Controls: </h4>
+                                </div>
+                                <div class="button-container">
+                                    <button type='button' class="stats-buttons" id='SearchButton'>Move now</button>
+                                    <button type='button' class="stats-buttons" id='NewGameButton'>New Game</button>
+                                    <button type='button' class="stats-buttons" id='TakeButton'>Take back</button>
+                                </div>
                             </div>
-                        </div>
-                        <div class="white-killed-pieces">
-
                         </div>
                     </div>
 
@@ -45,7 +43,7 @@
                         </div>
                         <div class="stats-thinking-time-choice">
                             <div>
-                                <h6>Thinking time:</h6>
+                                <h5>Thinking time:</h5>
                             </div>
                             <select id='think-time-choice'>
                                 <option value='1'>1s</option>
@@ -57,67 +55,21 @@
                             </select>
                         </div>
                         <div>
-                            <h6 id='BestOut'>BestMove:</h6>
-                            <h6 id='DepthOut'>Depth:</h6>
-                            <h6 id='ScoreOut'>Score:</h6>
-                            <h6 id='NodesOut'>Nodes:</h6>
-                            <h6 id='OrderingOut'>Ordering:</h6>
-                            <h6 id='TimeOut'>Time:</h6>
-                        </div>
-                        <div class="button-container">
-                            <button type='button' class="stats-buttons" id='SearchButton'>Move now</button>
-                            <button type='button' class="stats-buttons" id='NewGameButton'>New Game</button>
-                            <button type='button' class="stats-buttons" id='TakeButton'>Take back</button>
+                            <h5 id='BestOut'>BestMove:</h5>
+                            <h5 id='DepthOut'>Depth:</h5>
+                            <h5 id='ScoreOut'>Score:</h5>
+                            <h5 id='NodesOut'>Nodes:</h5>
+                            <h5 id='OrderingOut'>Ordering:</h5>
+                            <h5 id='TimeOut'>Time:</h5>
                         </div>
                         <div>
-                            <h6>Game status: </h6>
+                            <h5>Game status: </h5>
                             <h4 id="GameStatus"></h4>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-
-
-
-        <!-- <header>
-            <h3>Chess Engine</h3>
-        </header>
-        <div id="FenInDiv">
-            Fen:<br/>
-            <input type='text' id='fenIn'>
-            <button type='button' id='SetFen'>Set Position</button>
-        </div>
-
-        <div id="container">
-            <div id='Board'>
-            </div>
-    
-            <div id='EngineOutput'> Thinking time <br/>
-                <select id='ThinkTimeChoice'>
-                    <option value='1'>1s</option>
-                    <option value='2'>2s</option>
-                    <option value='4'>4s</option>
-                    <option value='6'>6s</option>
-                    <option value='8'>8s</option>
-                    <option value='10'>10s</option>
-                </select>
-                <br/><br/>
-    
-                <span id='BestOut'>BestMove:</span><br/>
-                <span id='DepthOut'>Depth:</span><br/>
-                <span id='ScoreOut'>Score:</span><br/>
-                <span id='NodesOut'>Nodes:</span><br/>
-                <span id='OrderingOut'>Ordering:</span><br/>
-                <span id='TimeOut'>Time:</span><br/><br/>
-    
-                <button type='button' id='SearchButton'>Move now</button><br/>
-                <button type='button' id='NewGameButton'>New Game</button><br/>
-                <button type='button' id='FlipButton'>Flip board</button><br/>
-                <button type='button' id='TakeButton'>Take back</button><br/><br/>
-                <span id="GameStatus"></span>
-            </div>
-        </div> -->
 
         <script src="js/jquery.js"></script>
         <script src="js/defs.js"></script>
